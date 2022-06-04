@@ -37,3 +37,16 @@ harvest_token <- function() {
     # harvest_token()
   }
 }
+
+
+
+#' Retrieve user credentials from keyring to environment.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+retrieve_creds <- function() {
+  Sys.setenv("HARVEST_ACCT_ID" = keyring::key_list(keyring_service)$username)
+  Sys.setenv("HARVEST_TOKEN" = keyring::key_get(keyring_service))
+}
