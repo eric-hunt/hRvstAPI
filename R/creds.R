@@ -98,3 +98,15 @@ retrieve_creds <- function() {
   Sys.setenv("HRVST_ACCT_ID" = keyring::key_list(keyring_service)$username)
   Sys.setenv("HRVST_TOKEN" = keyring::key_get(keyring_service))
 }
+
+
+
+#' Delete all hRvstAPI Harvest credentials from the keyring.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+clear_keyring_creds <- function() {
+  keyring::key_delete(service = keyring_service)
+}
