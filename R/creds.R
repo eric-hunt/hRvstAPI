@@ -144,5 +144,28 @@ set_creds <- function() {
       stop("Something is wrong with the user credentials. Consider setting in .Renviron.")
     }
   }
-  # TODO add report$session_interactive == TRUE conditionals
+  # If a user is present..
+  if (report$session_interactive) {
+    # ..and credentials exist in .Renviron..
+    if (report$creds_already_exist) {
+      message("Credentials are already set in the environment.")
+      # ..and credentials exist in the keyring..
+    } else if (report$creds_in_keyring && !report$too_many_creds) {
+      retrieve_creds()
+      # ..and credentials do not exist in the keyring or environment..
+    } else if (!report$creds_in_keyring) {
+      # add_creds() #TODO
+      retrieve_creds()
+      # ..and ambiguous credentials exist in the keyring..
+    } else if (report$too_many_creds) {
+      # TODO get user approval to remove multiple keyring creds
+      # clear_keyring_creds()
+      # add_creds() #TODO
+      retrieve_creds()
+    } else {
+      stop("Something is wrong with the user credentials. Consider setting in .Renviron.")
+    }
+  } else {
+    stop("This is a strange session. Stopping.")
+  }
 }
