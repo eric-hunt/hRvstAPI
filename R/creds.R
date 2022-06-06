@@ -125,3 +125,39 @@ clear_keyring_creds <- function() {
   keyring::key_delete(service = keyring_service)
   message("Credentials have been cleared from the keyring.")
 }
+
+
+
+#' Set user credentials as environment variables.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+set_creds <- function() {
+  report <- report_creds()
+
+  # If no user is present..
+  if (!report$session_interactive) {
+    # If credentials exist in .Renviron..
+    if (report$creds_already_exist) {
+      message("Credentials are already set in the environment.")
+    }
+    # If credentials exist in the keyring..
+    if (report$creds_in_keyring && !report$too_many_creds) {
+      retrieve_creds()
+    }
+    # If no credentials or ambiguous credentials exist in the keyring..
+    if (!report$creds_in_keyring || report$too_many_creds) {
+      assertthat::assert_that(
+        report$creds_already_exist,
+        msg = "No credentials or ambiguous credentials exist in the keyring,\n
+          and account ID or PAT are not set as environment variables.\n
+          Session is not interactive. Stopping."
+      )
+    } else {
+      stop("Something is wrong with the user credentials.")
+    }
+  }
+  # TODO add report$session_interactive == TRUE conditionals
+}
