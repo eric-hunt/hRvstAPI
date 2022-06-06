@@ -55,7 +55,7 @@ report_creds <- function() {
 #'
 #' @examples
 harvest_acct_id <- function() {
-  acct_id <- Sys.getenv("HARVEST_ACCT_ID")
+  acct_id <- Sys.getenv("HRVST_ACCT_ID")
   if (nzchar(acct_id)) {
     return(acct_id)
   } else {
@@ -76,7 +76,7 @@ harvest_acct_id <- function() {
 #'
 #' @examples
 harvest_token <- function() {
-  token <- Sys.getenv("HARVEST_TOKEN")
+  token <- Sys.getenv("HRVST_TOKEN")
   if (nzchar(token)) {
     return(token)
   } else {
@@ -95,6 +95,6 @@ harvest_token <- function() {
 #'
 #' @examples
 retrieve_creds <- function() {
-  Sys.setenv("HARVEST_ACCT_ID" = keyring::key_list(keyring_service)$username)
-  Sys.setenv("HARVEST_TOKEN" = keyring::key_get(keyring_service))
+  Sys.setenv("HRVST_ACCT_ID" = keyring::key_list(keyring_service)$username)
+  Sys.setenv("HRVST_TOKEN" = keyring::key_get(keyring_service))
 }
