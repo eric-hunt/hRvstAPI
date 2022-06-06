@@ -8,6 +8,9 @@
 #' @examples
 report_creds <- function() {
   report <- list()
+  if (rlang::is_interactive()) {
+    report$session_interactive <- TRUE
+  }
   if (!require(keyring)) {
     message("Keyring is not installed.")
     report$keyring_installed <- FALSE
