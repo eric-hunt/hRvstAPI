@@ -110,6 +110,7 @@ harvest_token <- function() {
 retrieve_creds <- function() {
   Sys.setenv("HRVST_ACCT_ID" = keyring::key_list(keyring_service)$username)
   Sys.setenv("HRVST_TOKEN" = keyring::key_get(keyring_service))
+  message("Credentials have been retrieved from the keyring and set in the environment.")
 }
 
 
@@ -122,4 +123,5 @@ retrieve_creds <- function() {
 #' @examples
 clear_keyring_creds <- function() {
   keyring::key_delete(service = keyring_service)
+  message("Credentials have been cleared from the keyring.")
 }
