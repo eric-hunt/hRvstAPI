@@ -126,16 +126,14 @@ set_creds <- function() {
 
   # If no user is present..
   if (!report$session_interactive) {
-    # If credentials exist in .Renviron..
+    # ..and credentials exist in .Renviron..
     if (report$creds_already_exist) {
       message("Credentials are already set in the environment.")
-    }
-    # If credentials exist in the keyring..
-    if (report$creds_in_keyring && !report$too_many_creds) {
+      # ..and credentials exist in the keyring..
+    } else if (report$creds_in_keyring && !report$too_many_creds) {
       retrieve_creds()
-    }
-    # If no credentials or ambiguous credentials exist in the keyring..
-    if (!report$creds_in_keyring || report$too_many_creds) {
+      # ..and no credentials or ambiguous credentials exist in the keyring..
+    } else if (!report$creds_in_keyring || report$too_many_creds) {
       assertthat::assert_that(
         report$creds_already_exist,
         msg = "No credentials or ambiguous credentials exist in the keyring,\n
@@ -143,7 +141,7 @@ set_creds <- function() {
           Session is not interactive. Stopping."
       )
     } else {
-      stop("Something is wrong with the user credentials.")
+      stop("Something is wrong with the user credentials. Consider setting in .Renviron.")
     }
   }
   # TODO add report$session_interactive == TRUE conditionals
