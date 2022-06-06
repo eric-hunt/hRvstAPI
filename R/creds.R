@@ -4,7 +4,7 @@
 #'
 #' @return A list -- variables related to credential existence.
 #' @export
-report_creds <- function() {
+check_creds <- function() {
   report <- list()
   if (rlang::is_interactive()) {
     report$session_interactive <- TRUE
@@ -122,7 +122,7 @@ clear_keyring_creds <- function() {
 #'
 #' @export
 set_creds <- function() {
-  report <- report_creds()
+  report <- check_creds()
 
   # If no user is present..
   if (!report$session_interactive) {
