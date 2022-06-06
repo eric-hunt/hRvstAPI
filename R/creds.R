@@ -1,3 +1,51 @@
+#' See if and where user credentials exist.
+#'
+#' Useful for informing subsequent user action within an application.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+report_creds <- function() {
+  report <- list()
+  if (!require(keyring)) {
+    message("Keyring is not installed.")
+    report$keyring_installed <- FALSE
+  }
+  if (require(keyring)) {
+    message("Keyring is installed.")
+    report$keyring_installed <- TRUE
+  }
+  if (!keyring::has_keyring_support()) {
+    message("Keyring not supported. Use .Renviron to set credentials.")
+    report$keyring_supported <- FALSE
+  }
+  if (keyring::has_keyring_support()) {
+    message("Keyring is supported.")
+    report$keyring_supported <- TRUE
+  }
+  if (nrow(keyring::key_list(keyring_service)) == 0) {
+    message("No credentials found in system keyring.")
+    report$creds_in_keyring <- FALSE
+    report$too_many_creds <- FALSE
+  }
+  if (nrow(keyring::key_list(keyring_service)) == 1) {
+    acct_id <- keyring::key_list(keyring_service)$username
+    message("Credentials found in system keyring for account: ", acct_id)
+    report$creds_in_keyring <- TRUE
+    report$too_many_creds <- FALSE
+    message("Import these credentials to the environment with `retrieve_creds()`")
+  }
+  if (nrow(keyring::key_list(keyring_service)) > 1) {
+    message("Multiple credentials fount in system keyring. Please clear and add credentials again, or set with .Renviron.")
+    report$creds_in_keyring <- TRUE
+    report$too_many_creds <- TRUE
+  }
+  return(invisible(report))
+}
+
+
+
 #' Return the user's Harvest API v2 account ID.
 #'
 #' @return
