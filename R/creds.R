@@ -2,10 +2,8 @@
 #'
 #' Useful for informing subsequent user action within an application.
 #'
-#' @return
+#' @return A list -- variables related to credential existence.
 #' @export
-#'
-#' @examples
 report_creds <- function() {
   report <- list()
   if (rlang::is_interactive()) {
@@ -61,12 +59,10 @@ report_creds <- function() {
 
 #' Return the user's Harvest API v2 account ID.
 #'
-#' @return
+#' @return A string -- the user account ID.
 #' @export
 #'
 #' @seealso \href{https://help.getharvest.com/api-v2/authentication-api/authentication/authentication/}{Harvest API V2 Documentation | Authentication}
-#'
-#' @examples
 harvest_acct_id <- function() {
   acct_id <- Sys.getenv("HRVST_ACCT_ID")
   if (nzchar(acct_id)) {
@@ -82,12 +78,10 @@ harvest_acct_id <- function() {
 
 #' Return the user's Harvest API v2 personal access token.
 #'
-#' @return
+#' @return A string -- the user personal access token.
 #' @export
 #'
 #' @seealso \href{https://help.getharvest.com/api-v2/authentication-api/authentication/authentication/}{Harvest API V2 Documentation | Authentication}
-#'
-#' @examples
 harvest_token <- function() {
   token <- Sys.getenv("HRVST_TOKEN")
   if (nzchar(token)) {
@@ -101,12 +95,11 @@ harvest_token <- function() {
 
 
 
-#' Retrieve user credentials from keyring to environment.
+#' Retrieve user credentials from the keyring to environment.
 #'
-#' @return
+#' This is intended to be a helper function for setting credentials.
+#'
 #' @export
-#'
-#' @examples
 retrieve_creds <- function() {
   Sys.setenv("HRVST_ACCT_ID" = keyring::key_list(keyring_service)$username)
   Sys.setenv("HRVST_TOKEN" = keyring::key_get(keyring_service))
@@ -117,10 +110,7 @@ retrieve_creds <- function() {
 
 #' Delete all hRvstAPI Harvest credentials from the keyring.
 #'
-#' @return
 #' @export
-#'
-#' @examples
 clear_keyring_creds <- function() {
   keyring::key_delete(service = keyring_service)
   message("Credentials have been cleared from the keyring.")
@@ -130,10 +120,7 @@ clear_keyring_creds <- function() {
 
 #' Set user credentials as environment variables.
 #'
-#' @return
 #' @export
-#'
-#' @examples
 set_creds <- function() {
   report <- report_creds()
 
