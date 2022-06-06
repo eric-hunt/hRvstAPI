@@ -44,6 +44,16 @@ report_creds <- function() {
     report$creds_in_keyring <- TRUE
     report$too_many_creds <- TRUE
   }
+  if (isTRUE(
+    sapply(
+      c("HRVST_ACCT_ID", "HRVST_TOKEN"),
+      \(x) nzchar(Sys.getenv(x))
+    )
+  )) {
+    report$creds_already_exist <- TRUE
+  } else {
+    report$creds_already_exist <- FALSE
+  }
   return(invisible(report))
 }
 
