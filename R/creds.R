@@ -118,6 +118,16 @@ clear_keyring_creds <- function() {
 
 
 
+#' Delete all hRvstAPI Harvest credentials from the environment.
+#'
+#' @export
+clear_environment_creds <- function() {
+  Sys.unsetenv("HRVST_ACCT_ID")
+  Sys.unsetenv("HRVST_TOKEN")
+}
+
+
+
 #' Set user credentials as environment variables.
 #'
 #' @export
@@ -160,6 +170,7 @@ set_creds <- function() {
     } else if (report$too_many_creds) {
       # TODO get user approval to remove multiple keyring creds
       clear_keyring_creds()
+      clear_environment_creds()
       add_creds()
       retrieve_creds()
     } else {
