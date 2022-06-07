@@ -154,13 +154,13 @@ set_creds <- function() {
       retrieve_creds()
       # ..and credentials do not exist in the keyring or environment..
     } else if (!report$creds_in_keyring) {
-      # add_creds() #TODO
+      add_creds()
       retrieve_creds()
       # ..and ambiguous credentials exist in the keyring..
     } else if (report$too_many_creds) {
       # TODO get user approval to remove multiple keyring creds
-      # clear_keyring_creds()
-      # add_creds() #TODO
+      clear_keyring_creds()
+      add_creds()
       retrieve_creds()
     } else {
       stop("Something is wrong with the user credentials. Consider setting in .Renviron.")
@@ -168,4 +168,41 @@ set_creds <- function() {
   } else {
     stop("This is a strange session. Stopping.")
   }
+}
+
+
+
+#' Add user credentials to the keyring.
+#'
+#' @param message A string presented to the user at credential entry request.
+#'
+#' @export
+add_creds <- function(message = "Please enter your Harvest account ID.") {
+  acct_id <- stringr::str_remove(
+    stringr::str_squish(
+      getPass::getPass(msg = message)
+    ),
+    pattern = " "
+  )
+  acct_id_test <- isTRUE(!is.null(acct_id) && nzchar(acct_id))
+  if (!acct_id_test) {
+    add_creds(message = "Account ID is NULL or missing. Please re-enter.")
+  }
+
+  token <- stringr::str_remove(
+    stringr::str_squish(
+      getPass::getPass(msg = message)
+    ),
+    pattern = " "
+  )
+  token_test <- isTRUE(!is.null(token) && nzchar(token))
+  if (!token_test) {
+    add_creds(message = "Account ID is NULL or missing. Please re-enter.")
+  }
+
+  keyring::key_set_with_value(
+    service = hRvstAPI::keyring_service,
+    username = acct_id,
+    password = token
+  )
 }
