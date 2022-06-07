@@ -185,32 +185,51 @@ set_creds <- function() {
 
 #' Add user credentials to the keyring.
 #'
-#' @param message A string presented to the user at credential entry request.
-#'
 #' @export
-add_creds <- function(message = "Please enter your Harvest account ID.") {
-  acct_id <- stringr::str_remove(
-    stringr::str_squish(
-      getPass::getPass(msg = message)
-    ),
-    pattern = " "
-  )
+add_creds <- function() {
+  # Give three tries to add the account ID..
+  add_acct_id <- function(message = "Please enter your Harvest account ID.") {
+    stringr::str_remove(
+      stringr::str_squish(
+        getPass::getPass(msg = message)
+      ),
+      pattern = " "
+    )
+  }
+  acct_id <- add_acct_id()
   acct_id_test <- isTRUE(!is.null(acct_id) && nzchar(acct_id))
-  if (!acct_id_test) {
-    add_creds(message = "Account ID is NULL or missing. Please re-enter.")
+  acct_id_tries <- 1
+  while (!acct_id_test) {
+    if (acct_id_tries >= 3) {
+      stop("Too many tries to enter nothing.")
+    }
+    acct_id <- add_acct_id(
+      message = "Account ID is NULL or missing. Please re-enter."
+    )
+    acct_id_tries <- acct_id_tries + 1
   }
-
-  token <- stringr::str_remove(
-    stringr::str_squish(
-      getPass::getPass(msg = message)
-    ),
-    pattern = " "
-  )
+  # Give three tries to add the PAT..
+  add_token <- function(message = "Please enter your Harvest token.") {
+    stringr::str_remove(
+      stringr::str_squish(
+        getPass::getPass(msg = message)
+      ),
+      pattern = " "
+    )
+  }
+  token <- add_token()
   token_test <- isTRUE(!is.null(token) && nzchar(token))
-  if (!token_test) {
-    add_creds(message = "Account ID is NULL or missing. Please re-enter.")
+  token_tries <- 1
+  while (!token_test) {
+    if (token_tries >= 3) {
+      stop("Too many tries to enter nothing.")
+    }
+    token <- add_token(
+      message = "Token is NULL or missing. Please re-enter."
+    )
+    token_tries <- token_tries + 1
   }
-
+  # Set the values to the keyring..
   keyring::key_set_with_value(
     service = hRvstAPI::keyring_service,
     username = acct_id,
