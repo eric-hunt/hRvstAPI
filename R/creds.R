@@ -69,8 +69,8 @@ harvest_acct_id <- function() {
     return(acct_id)
   } else {
     message("Account ID is missing. Running credential setup now..")
-    # set_creds() #TODO
-    # harvest_acct_id()
+    set_creds()
+    harvest_acct_id()
   }
 }
 
@@ -88,8 +88,8 @@ harvest_token <- function() {
     return(token)
   } else {
     message("Personal access token is missing. Running credential setup now..")
-    # set_creds() #TODO
-    # harvest_token()
+    set_creds()
+    harvest_token()
   }
 }
 
