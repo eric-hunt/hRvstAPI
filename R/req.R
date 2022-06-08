@@ -19,7 +19,7 @@ harvest_GET <- function(base_url = NULL, headers = NULL,
     headers,
     list(
       `Harvest-Account-Id` = hRvstAPI::harvest_acct_id(),
-      # Authorization = glue::glue("Bearer {hRvstAPI::harvest_token()}"),
+      `Authorization` = paste0("Bearer ", hRvstAPI::harvest_token()),
       `User-Agent` = hRvstAPI::.agent
     )
   )
@@ -47,8 +47,8 @@ harvest_GET <- function(base_url = NULL, headers = NULL,
   }
 
   req_obj <- httr2::request(base_url = base_url) |>
-    httr2::req_headers(!!!all_headers) |>
-    httr2::req_auth_bearer_token(hRvstAPI::harvest_token())
+    httr2::req_headers(!!!all_headers)# |>
+    # httr2::req_auth_bearer_token(hRvstAPI::harvest_token())
 
   if (!rlang::is_null(queries)) {
     httr2::req_url_query(req_obj, !!!queries)
