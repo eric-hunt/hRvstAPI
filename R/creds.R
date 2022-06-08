@@ -1,3 +1,6 @@
+#' @include params.R
+NULL
+
 #' See if and where user credentials exist.
 #'
 #' Useful for informing subsequent user action within an application.
@@ -25,19 +28,19 @@ check_creds <- function() {
     message("Keyring is supported.")
     report$keyring_supported <- TRUE
   }
-  if (nrow(keyring::key_list(hRvstAPI::keyring_service)) == 0) {
+  if (nrow(keyring::key_list(hRvstAPI::.service)) == 0) {
     message("No credentials found in system keyring.")
     report$creds_in_keyring <- FALSE
     report$too_many_creds <- FALSE
   }
-  if (nrow(keyring::key_list(hRvstAPI::keyring_service)) == 1) {
-    acct_id <- keyring::key_list(hRvstAPI::keyring_service)$username
+  if (nrow(keyring::key_list(hRvstAPI::.service)) == 1) {
+    acct_id <- keyring::key_list(hRvstAPI::.service)$username
     message("Credentials found in system keyring for account: ", acct_id)
     report$creds_in_keyring <- TRUE
     report$too_many_creds <- FALSE
     message("Import these credentials to the environment with `retrieve_creds()`")
   }
-  if (nrow(keyring::key_list(hRvstAPI::keyring_service)) > 1) {
+  if (nrow(keyring::key_list(hRvstAPI::.service)) > 1) {
     message("Multiple credentials fount in system keyring. Please clear and add credentials again, or set with .Renviron.")
     report$creds_in_keyring <- TRUE
     report$too_many_creds <- TRUE
@@ -101,8 +104,8 @@ harvest_token <- function() {
 #'
 #' @export
 retrieve_creds <- function() {
-  Sys.setenv("HRVST_ACCT_ID" = keyring::key_list(hRvstAPI::keyring_service)$username)
-  Sys.setenv("HRVST_TOKEN" = keyring::key_get(hRvstAPI::keyring_service))
+  Sys.setenv("HRVST_ACCT_ID" = keyring::key_list(hRvstAPI::.service)$username)
+  Sys.setenv("HRVST_TOKEN" = keyring::key_get(hRvstAPI::.service))
   message("Credentials have been retrieved from the keyring and set in the environment.")
 }
 
@@ -112,7 +115,7 @@ retrieve_creds <- function() {
 #'
 #' @export
 clear_keyring_creds <- function() {
-  keyring::key_delete(service = hRvstAPI::keyring_service)
+  keyring::key_delete(service = hRvstAPI::.service)
   message("Credentials have been cleared from the keyring.")
 }
 
@@ -231,7 +234,7 @@ add_creds <- function() {
   }
   # Set the values to the keyring..
   keyring::key_set_with_value(
-    service = hRvstAPI::keyring_service,
+    service = hRvstAPI::.service,
     username = acct_id,
     password = token
   )

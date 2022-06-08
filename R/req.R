@@ -1,3 +1,6 @@
+#' @include params.R
+NULL
+
 #' Create an authenticated GET request with headers and queries.
 #'
 #' @param base_url
@@ -9,7 +12,7 @@
 harvest_GET <- function(base_url = NULL, headers = NULL,
                         is_active = NULL, ...) {
   if (missing(base_url) || rlang::is_null(base_url)) {
-    base_url <- hRvstAPI::base_url
+    base_url <- hRvstAPI::.url
   }
 
   common_headers <- c(
@@ -17,7 +20,7 @@ harvest_GET <- function(base_url = NULL, headers = NULL,
     list(
       `Harvest-Account-Id` = hRvstAPI::harvest_acct_id(),
       # Authorization = glue::glue("Bearer {hRvstAPI::harvest_token()}"),
-      `User-Agent` = hRvstAPI::user_agent
+      `User-Agent` = hRvstAPI::.agent
     )
   )
 
