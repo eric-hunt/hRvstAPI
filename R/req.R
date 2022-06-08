@@ -5,6 +5,7 @@
 #' @param ...
 #'
 #' @return
+#' @export
 harvest_GET <- function(base_url = NULL, headers = NULL,
                         is_active = NULL, ...) {
   if (missing(base_url) || rlang::is_null(base_url)) {
