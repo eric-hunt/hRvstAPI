@@ -113,6 +113,10 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
     rate_limit <- 100/15100 # 100 requests per 15 minutes for reports API
   }
 
+  if (any(grepl("page", names(list(...))))) {
+    all_pages <- FALSE
+  }
+
   first_req <- hRvstAPI::harvest_GET(
     base_url = base_url,
     headers = headers,
@@ -153,6 +157,10 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
     }
     cat("All", total_pages, "pages were requested.\n")
     cat(length(all_resp), "pages were successfully downloaded.")
+  }
+
+  if (!all_pages) {
+    cat("Only page", all_resp[[1]][["page"]], "was downloaded.\n")
   }
 
   return(all_resp)
