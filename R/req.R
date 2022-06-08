@@ -5,7 +5,9 @@
 #' @param ...
 #'
 #' @return
-harvest_GET <- function(base_url = NULL, headers = NULL, ...) {
+harvest_GET <- function(base_url = NULL, headers = NULL,
+                        ...,
+                        is_active = NULL) {
   if (missing(base_url) || rlang::is_null(base_url)) {
     base_url <- hRvstAPI::base_url
   }
@@ -28,10 +30,17 @@ harvest_GET <- function(base_url = NULL, headers = NULL, ...) {
     )
   }
 
-  if (missing(...)) {
+  if (!missing(is_active) || !rlang::is_null(is_active)) {
+    assertthat::assert_that(
+      rlang::is_bool(is_active),
+      msg = "If provided, argument is_active must be TRUE or FALSE."
+    )
+  }
+
+  if (missing(...) && (missing(is_active) || rlang::is_null(is_active))) {
     queries <- NULL
   } else {
-    queries <- list(...)
+    queries <- list(is_active = is_active, ...)
   }
 
   req_obj <- httr2::request(base_url = base_url) |>
@@ -39,7 +48,7 @@ harvest_GET <- function(base_url = NULL, headers = NULL, ...) {
     httr2::req_auth_bearer_token(hRvstAPI::harvest_token())
 
   if (!rlang::is_null(queries)) {
-    httr2::req_url_query(req_obj, queries)
+    httr2::req_url_query(req_obj, !!!queries)
   } else {
     req_obj
   }
@@ -59,8 +68,10 @@ harvest_GET <- function(base_url = NULL, headers = NULL, ...) {
 #' @export
 #'
 #' @seealso \href{https://help.getharvest.com/api-v2/introduction/overview/general/#rate-limiting}{Harvest API V2 Documentation | Rate Limiting}
-harvest_req <- function(resource = NULL, all_pages = TRUE,
-                        base_url = NULL, headers = NULL, ...) {
+harvest_req <- function(resource = NULL,
+                        ...,
+                        all_pages = TRUE, base_url = NULL, headers = NULL,
+                        is_active = NULL) {
   assertthat::assert_that(
     rlang::is_bool(all_pages),
     msg = "Argument all_pages must be TRUE or FALSE."
@@ -107,7 +118,8 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
   first_req <- hRvstAPI::harvest_GET(
     base_url = base_url,
     headers = headers,
-    ...
+    ...,
+    is_active = is_active
   ) |>
     httr2::req_url_path_append(resource) |>
     httr2::req_throttle(rate = rate_limit) |>
