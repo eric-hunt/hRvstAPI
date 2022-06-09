@@ -165,16 +165,16 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
 
   print(first_req)
 
-  do_parse_resp <- function(.req = NULL) {
+  perform_and_parse <- function(.req = NULL) {
     assertthat::assert_that(
       !rlang::is_null(.req),
-      msg = "Request is missing in `do_parse_resp()`."
+      msg = "Request is missing in `perform_and_parse()`."
     )
     httr2::req_perform(.req) |>
       httr2::resp_body_json(simplifyVector = TRUE, flatten = TRUE)
   }
 
-  resp <- first_req |> do_parse_resp()
+  resp <- first_req |> perform_and_parse()
 
   total_pages <- resp$total_pages
 
@@ -187,7 +187,7 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
   if (all_pages) {
     while (!rlang::is_null(next_link)) {
       resp <- hRvstAPI::harvest_GET(base_url = next_link) |>
-        do_parse_resp()
+        perform_and_parse()
       all_resp <- c(all_resp, list(resp))
       next_link <- resp$links[["next"]]
     }
