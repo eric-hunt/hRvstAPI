@@ -107,7 +107,7 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
     msg = "Argument all_pages must be TRUE or FALSE."
   )
 
-  resource <- match.arg(
+  resource_arg <- match.arg(
     resource,
     c(
       NULL,
@@ -117,14 +117,15 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
       "users",
       "user assignments",
       "task assignments",
+      "project assignments",
       "time entries",
       "budget report",
       "time report"
     )
   )
 
-  resource <- switch(
-    resource,
+  resource_path <- switch(
+    resource_arg,
     NULL = NULL,
     "clients" = "clients",
     "projects" = "projects",
@@ -132,6 +133,7 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
     "users" = "users",
     "user assignments" = "user_assignments",
     "task assignments" = "task_assignments",
+    "project assignments" = "users",
     "time" = "time_entries",
     "budget report" = "budget_report",
     "time report" = "time_report"
@@ -141,8 +143,8 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
 
   # Harvest API v2 Rate Limiting
   # https://help.getharvest.com/api-v2/introduction/overview/general/#rate-limiting
-  if (grepl("report", resource)) {
-    rate_limit <- 100/(15*60) # 100 requests per 15 seconds for general API
+  if (grepl("report", resource_arg)) {
+    rate_limit <- 100/(15*60) # 100 requests per 15 minutes for reports API
   } else {
     rate_limit <- 100/15100 # 100 requests per 15 minutes for reports API
   }
@@ -157,7 +159,7 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
     is_active = is_active,
     ...
   ) |>
-    httr2::req_url_path_append(resource) |>
+    httr2::req_url_path_append(resource_path) |>
     httr2::req_throttle(rate = rate_limit) |>
     httr2::req_retry(max_tries = 5)
 
@@ -197,5 +199,19 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
     cat("Only page", all_resp[[1]][["page"]], "was downloaded.\n")
   }
 
-  return(all_resp)
+  if (resource_arg == "project assignments") {
+    # extract all user ids from all_resp with map_int and then map over that
+    # to generate all request urls for project assignments, return that.
+    user_ids <- purrr::flatten_chr(
+      purrr::map(all_resp, purrr::pluck, "users", "id")
+    )
+    purrr::map(
+      user_ids,
+      function(id) {
+        httr2::req_url_path_append(first_req, id, "project_assignments")
+      }
+    )
+  } else {
+    all_resp
+  }
 }
