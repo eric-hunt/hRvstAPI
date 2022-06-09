@@ -146,7 +146,7 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
   if (grepl("report", resource_arg)) {
     rate_limit <- 100/(15*60) # 100 requests per 15 minutes for reports API
   } else {
-    rate_limit <- 100/15100 # 100 requests per 15 minutes for reports API
+    rate_limit <- 100/15 # 100 requests per 15 seconds for general API
   }
 
   if (any(grepl("page", names(list(...))))) {
