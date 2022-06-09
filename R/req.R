@@ -3,12 +3,19 @@ NULL
 
 #' Create an authenticated GET request with headers and queries.
 #'
-#' @param base_url
-#' @param headers
-#' @param ...
+#' The basic headers that are automatically set in this function are
+#' `Harvest-Account-Id`, `Authorization`, and `User-Agent`. Other headers
+#' can be added by the user and will be concatenated, but currently
+#' these important headers are set by the `hRvstAPI::harvest_acct_id()`,
+#' `hRvstAPI::harvest_token()`, and `hRvstAPI::.agent` objects.
 #'
-#' @return
+#' @param base_url A string -- the common URL component for Harvest API v2 requests. (default value NULL will refer to hRvstAPI::.url)
+#' @param headers A list -- the headers required for authentication of each Harvest API v2 request.
+#' @param ... A named list of (optional) additional query parameters.
+#'
+#' @return An HTTP response: an S3 list with class `httr2_request`.
 #' @export
+#' @seealso [httr2::request()]
 harvest_GET <- function(base_url = NULL, headers = NULL,
                         is_active = NULL, ...) {
   if (missing(base_url) || rlang::is_null(base_url)) {
@@ -61,13 +68,34 @@ harvest_GET <- function(base_url = NULL, headers = NULL,
 
 #' Perform a request for a Harvest API resource.
 #'
-#' @param resource
-#' @param all_pages
-#' @param base_url
-#' @param headers
-#' @param ...
+#' This is the primary function used to gather resources from the
+#' Harvest API v2. It uses [hRvstAPI::harvest_GET()] to construct
+#' an [httr2::request()] and then performs that request after
+#' modifying the URL.
 #'
-#' @return
+#' If only a specific page is required, the `page = [n]` parameter
+#' can be passed to `...` to be added to the query parameters.
+#' Adding this query parameter will automatically set *all_pages*
+#' to FALSE.
+#'
+#' @param resource A string -- modifies the URL path to point to a specific Harvest API v2 resource. Currently available options:
+#' - clients
+#' - projects
+#' - tasks
+#' - users
+#' - user assignments
+#' - task assignments
+#' - time entries
+#' - budget reports
+#' - time reports
+#' @param all_pages A boolean -- should all pages be gathered for a requested resource? (default value TRUE)
+#' @param base_url -- A string -- the common URL component for Harvest API v2 requests, passed to [hRvstAPI::harvest_GET()].
+#' @param headers A list -- the headers required for authentication of each Harvest API v2 request, passed to [hRvstAPI::harvest_GET()].
+#' @param ... A named list of (optional) additional query parameters, passed to [hRvstAPI::harvest_GET()].
+#'
+#' @return If request is successful (i.e. the request was successfully
+#'   performed and a response with HTTP status code <400 was recieved), an HTTP
+#'   [httr2::response()]; otherwise throws an error.
 #' @export
 #'
 #' @seealso \href{https://help.getharvest.com/api-v2/introduction/overview/general/#rate-limiting}{Harvest API V2 Documentation | Rate Limiting}
@@ -108,6 +136,8 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
     "budget report" = "budget_report",
     "time report" = "time_report"
   )
+
+  # TODO expand path for user project assignments for all users
 
   # Harvest API v2 Rate Limiting
   # https://help.getharvest.com/api-v2/introduction/overview/general/#rate-limiting
