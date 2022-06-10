@@ -68,26 +68,45 @@ harvest_GET <- function(base_url = NULL, headers = NULL,
 
 #' Perform a request for a Harvest API resource.
 #'
+#' @description
 #' This is the primary function used to gather resources from the
 #' Harvest API v2. It uses [hRvstAPI::harvest_GET()] to construct
 #' an [httr2::request()] and then performs that request after
 #' modifying the URL.
 #'
+#' *Requests are automatically throttled to comply with
+#' Harvest API v2 constraints.*
+#'
+#' @details
 #' If only a specific page is required, the `page = [n]` parameter
 #' can be passed to `...` to be added to the query parameters.
 #' Adding this query parameter will automatically set *all_pages*
 #' to FALSE.
 #'
 #' @param resource A string -- modifies the URL path to point to a specific Harvest API v2 resource. Currently available options:
-#' - clients
-#' - projects
-#' - tasks
-#' - users
-#' - user assignments
-#' - task assignments
-#' - time entries
-#' - budget reports
-#' - time reports
+#' - **users**
+#'     ([Users API](https://help.getharvest.com/api-v2/users-api/))
+#' - **clients**
+#'     ([Clients API](https://help.getharvest.com/api-v2/clients-api/))
+#' - **projects**
+#'     ([Projects API](https://help.getharvest.com/api-v2/projects-api/))
+#' - **tasks**
+#'     ([Tasks API](https://help.getharvest.com/api-v2/tasks-api/))
+#' - **project assignments**
+#'     (via [Users API](https://help.getharvest.com/api-v2/users-api/))
+#'     *i.e Which projects belong to which clients.*
+#' - **user assignments**
+#'     (via [Projects API](https://help.getharvest.com/api-v2/projects-api/))
+#'     *i.e. How users are assigned to each projects.*
+#' - **task assignments**
+#'     (via [Projects API](https://help.getharvest.com/api-v2/projects-api/))
+#'     *i.e. What tasks are assigned to each project.*
+#' - **time entries**
+#'     (via [Timesheets API](https://help.getharvest.com/api-v2/timesheets-api/))
+#' - **budget reports**
+#'     (via [Reports API](https://help.getharvest.com/api-v2/reports-api/))
+#' - **time reports**
+#'     (via [Reports API](https://help.getharvest.com/api-v2/reports-api/))
 #' @param all_pages A boolean -- should all pages be gathered for a requested resource? (default value TRUE)
 #' @param base_url -- A string -- the common URL component for Harvest API v2 requests, passed to [hRvstAPI::harvest_GET()].
 #' @param headers A list -- the headers required for authentication of each Harvest API v2 request, passed to [hRvstAPI::harvest_GET()].
@@ -98,7 +117,7 @@ harvest_GET <- function(base_url = NULL, headers = NULL,
 #'   [httr2::response()]; otherwise throws an error.
 #' @export
 #'
-#' @seealso \href{https://help.getharvest.com/api-v2/introduction/overview/general/#rate-limiting}{Harvest API V2 Documentation | Rate Limiting}
+#' @seealso [Harvest API V2 Documentation | Rate Limiting](https://help.getharvest.com/api-v2/introduction/overview/general/#rate-limiting)
 harvest_req <- function(resource = NULL, all_pages = TRUE,
                         base_url = NULL, headers = NULL,
                         is_active = NULL, ...) {
@@ -200,8 +219,6 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
   }
 
   if (resource_arg == "project assignments") {
-    # extract all user ids from all_resp with map_int and then map over that
-    # to generate all request urls for project assignments, return that.
     user_ids <- purrr::flatten_chr(
       purrr::map(all_resp, purrr::pluck, "users", "id")
     )

@@ -65,7 +65,7 @@ check_creds <- function() {
 #' @return A string -- the user account ID.
 #' @export
 #'
-#' @seealso \href{https://help.getharvest.com/api-v2/authentication-api/authentication/authentication/}{Harvest API V2 Documentation | Authentication}
+#' @seealso [Harvest API V2 Documentation | Authentication](https://help.getharvest.com/api-v2/authentication-api/authentication/authentication/)
 harvest_acct_id <- function() {
   acct_id <- Sys.getenv("HRVST_ACCT_ID")
   if (nzchar(acct_id)) {
@@ -84,7 +84,7 @@ harvest_acct_id <- function() {
 #' @return A string -- the user personal access token.
 #' @export
 #'
-#' @seealso \href{https://help.getharvest.com/api-v2/authentication-api/authentication/authentication/}{Harvest API V2 Documentation | Authentication}
+#' @seealso [Harvest API V2 Documentation | Authentication](https://help.getharvest.com/api-v2/authentication-api/authentication/authentication/)
 harvest_token <- function() {
   token <- Sys.getenv("HRVST_TOKEN")
   if (nzchar(token)) {

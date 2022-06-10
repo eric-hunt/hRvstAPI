@@ -16,15 +16,29 @@ harvest_req(
 \arguments{
 \item{resource}{A string -- modifies the URL path to point to a specific Harvest API v2 resource. Currently available options:
 \itemize{
-\item clients
-\item projects
-\item tasks
-\item users
-\item user assignments
-\item task assignments
-\item time entries
-\item budget reports
-\item time reports
+\item \strong{users}
+(\href{https://help.getharvest.com/api-v2/users-api/}{Users API})
+\item \strong{clients}
+(\href{https://help.getharvest.com/api-v2/clients-api/}{Clients API})
+\item \strong{projects}
+(\href{https://help.getharvest.com/api-v2/projects-api/}{Projects API})
+\item \strong{tasks}
+(\href{https://help.getharvest.com/api-v2/tasks-api/}{Tasks API})
+\item \strong{project assignments}
+(via \href{https://help.getharvest.com/api-v2/users-api/}{Users API})
+\emph{i.e Which projects belong to which clients.}
+\item \strong{user assignments}
+(via \href{https://help.getharvest.com/api-v2/projects-api/}{Projects API})
+\emph{i.e. How users are assigned to each projects.}
+\item \strong{task assignments}
+(via \href{https://help.getharvest.com/api-v2/projects-api/}{Projects API})
+\emph{i.e. What tasks are assigned to each project.}
+\item \strong{time entries}
+(via \href{https://help.getharvest.com/api-v2/timesheets-api/}{Timesheets API})
+\item \strong{budget reports}
+(via \href{https://help.getharvest.com/api-v2/reports-api/}{Reports API})
+\item \strong{time reports}
+(via \href{https://help.getharvest.com/api-v2/reports-api/}{Reports API})
 }}
 
 \item{all_pages}{A boolean -- should all pages be gathered for a requested resource? (default value TRUE)}
@@ -45,6 +59,9 @@ This is the primary function used to gather resources from the
 Harvest API v2. It uses \code{\link[=harvest_GET]{harvest_GET()}} to construct
 an \code{\link[httr2:request]{httr2::request()}} and then performs that request after
 modifying the URL.
+
+\emph{Requests are automatically throttled to comply with
+Harvest API v2 constraints.}
 }
 \details{
 If only a specific page is required, the \verb{page = [n]} parameter

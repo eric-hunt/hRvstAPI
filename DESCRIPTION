@@ -16,6 +16,7 @@ Imports:
     getPass,
     httr2,
     keyring,
+    purrr,
     rlang,
     stringr
 Collate: 
