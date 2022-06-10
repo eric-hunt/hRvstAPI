@@ -112,9 +112,7 @@ harvest_GET <- function(base_url = NULL, headers = NULL,
 #' @param headers A list -- the headers required for authentication of each Harvest API v2 request, passed to [hRvstAPI::harvest_GET()].
 #' @param ... A named list of (optional) additional query parameters, passed to [hRvstAPI::harvest_GET()].
 #'
-#' @return If request is successful (i.e. the request was successfully
-#'   performed and a response with HTTP status code <400 was recieved), an HTTP
-#'   [httr2::response()]; otherwise throws an error.
+#' @return A [tibble::tibble()] of all response content.
 #' @export
 #'
 #' @seealso [Harvest API V2 Documentation | Rate Limiting](https://help.getharvest.com/api-v2/introduction/overview/general/#rate-limiting)
@@ -172,6 +170,31 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
     all_pages <- FALSE
   }
 
+  # function to perform the request and parse JSON to R list..
+  perform_and_parse <- function(.req = NULL) {
+    assertthat::assert_that(
+      !rlang::is_null(.req),
+      msg = "`perform_and_parse()`: request is missing."
+    )
+    httr2::req_perform(.req) |>
+      httr2::resp_body_json(simplifyVector = TRUE, flatten = TRUE)
+  }
+
+  # function to extract data and format as a tibble..
+  extract_data <- function(.parsed_resp, .mapped = TRUE) {
+    assertthat::assert_that(
+      rlang::is_bool(.mapped),
+      msg = "`extract_data()`: .mapped must be TRUE or FALSE."
+    )
+    if (.mapped) {
+      accessors <- c(1) # `map` or `apply` accesses first level of list
+    } else {
+      accessors <- c(1, 1) # need another accessor to enter first level of list
+    }
+    tibble::as_tibble(purrr::pluck(.parsed_resp, !!!accessors)) |>
+      dplyr::mutate(resp_page = .parsed_resp$page)
+  }
+
   first_req <- hRvstAPI::harvest_GET(
     base_url = base_url,
     headers = headers,
@@ -183,15 +206,6 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
     httr2::req_retry(max_tries = 5)
 
   print(first_req)
-
-  perform_and_parse <- function(.req = NULL) {
-    assertthat::assert_that(
-      !rlang::is_null(.req),
-      msg = "Request is missing in `perform_and_parse()`."
-    )
-    httr2::req_perform(.req) |>
-      httr2::resp_body_json(simplifyVector = TRUE, flatten = TRUE)
-  }
 
   resp <- first_req |> perform_and_parse()
 
@@ -223,12 +237,20 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
       purrr::map(all_resp, purrr::pluck, "users", "id")
     )
     purrr::map(
-      user_ids,
+      purrr::set_names(user_ids),
       function(id) {
-        httr2::req_url_path_append(first_req, id, "project_assignments")
+        httr2::req_url_path_append(first_req, id, "project_assignments") |>
+          perform_and_parse()
       }
-    )
+    ) |>
+      purrr::imap_dfr(
+        function(parsed_resp, nm) {
+          extract_data(parsed_resp) |>
+            dplyr::mutate(user_id = readr::parse_integer(nm))
+        }
+      )
   } else {
-    all_resp
+    all_resp |>
+      purrr::map_dfr(extract_data)
   }
 }

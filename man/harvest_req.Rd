@@ -50,9 +50,7 @@ harvest_req(
 \item{...}{A named list of (optional) additional query parameters, passed to \code{\link[=harvest_GET]{harvest_GET()}}.}
 }
 \value{
-If request is successful (i.e. the request was successfully
-performed and a response with HTTP status code <400 was recieved), an HTTP
-\code{\link[httr2:response]{httr2::response()}}; otherwise throws an error.
+A \code{\link[tibble:tibble]{tibble::tibble()}} of all response content.
 }
 \description{
 This is the primary function used to gather resources from the
