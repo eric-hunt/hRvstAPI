@@ -9,14 +9,12 @@ NULL
 #' @export
 check_creds <- function() {
   report <- list()
-  if (rlang::is_interactive()) {
-    report$session_interactive <- TRUE
-  }
-  if (!require(keyring)) {
+  report$session_interactive <- rlang::is_interactive()
+  if (!("keyring" %in% installed.packages()[, 1])) {
     message("Keyring is not installed.")
     report$keyring_installed <- FALSE
   }
-  if (require(keyring)) {
+  if ("keyring" %in% installed.packages()[, 1]) {
     message("Keyring is installed.")
     report$keyring_installed <- TRUE
   }
