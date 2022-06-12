@@ -4,7 +4,10 @@
 \alias{retrieve_creds}
 \title{Retrieve user credentials from the keyring to environment.}
 \usage{
-retrieve_creds()
+retrieve_creds(.report = NULL)
+}
+\arguments{
+\item{.report}{A list -- report returned from hRvstAPI::check_creds()}
 }
 \description{
 This is intended to be a helper function for setting credentials.

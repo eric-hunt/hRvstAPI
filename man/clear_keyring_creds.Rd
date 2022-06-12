@@ -7,5 +7,5 @@
 clear_keyring_creds()
 }
 \description{
-Delete all hRvstAPI Harvest credentials from the keyring.
+This is intended to be a helper function for setting credentials.
 }

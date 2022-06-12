@@ -6,17 +6,17 @@ NULL
 #' The basic headers that are automatically set in this function are
 #' `Harvest-Account-Id`, `Authorization`, and `User-Agent`. Other headers
 #' can be added by the user and will be concatenated, but currently
-#' these important headers are set by the `hRvstAPI::harvest_acct_id()`,
-#' `hRvstAPI::harvest_token()`, and `hRvstAPI::.agent` objects.
+#' these important headers are set by the `hRvstAPI::hrvst_acct_id()`,
+#' `hRvstAPI::hrvst_token()`, and `hRvstAPI::.agent` objects.
 #'
 #' @param base_url A string -- the common URL component for Harvest API v2 requests. (default value NULL will refer to hRvstAPI::.url)
 #' @param headers A list -- the headers required for authentication of each Harvest API v2 request.
 #' @param ... A named list of (optional) additional query parameters.
 #'
 #' @return An HTTP response: an S3 list with class `httr2_request`.
-#' @export
+#'
 #' @seealso [httr2::request()]
-harvest_GET <- function(base_url = NULL, headers = NULL,
+hrvst_GET <- function(base_url = NULL, headers = NULL,
                         is_active = NULL, ...) {
   if (missing(base_url) || rlang::is_null(base_url)) {
     base_url <- hRvstAPI::.url
@@ -25,8 +25,8 @@ harvest_GET <- function(base_url = NULL, headers = NULL,
   common_headers <- c(
     headers,
     list(
-      `Harvest-Account-Id` = hRvstAPI::harvest_acct_id(),
-      `Authorization` = paste0("Bearer ", hRvstAPI::harvest_token()),
+      `Harvest-Account-Id` = hRvstAPI::hrvst_acct_id(),
+      `Authorization` = paste0("Bearer ", hRvstAPI::hrvst_token()),
       `User-Agent` = hRvstAPI::.agent
     )
   )
@@ -54,8 +54,8 @@ harvest_GET <- function(base_url = NULL, headers = NULL,
   }
 
   req_obj <- httr2::request(base_url = base_url) |>
-    httr2::req_headers(!!!all_headers)# |>
-    # httr2::req_auth_bearer_token(hRvstAPI::harvest_token())
+    httr2::req_headers(!!!all_headers) # |>
+  # httr2::req_auth_bearer_token(hRvstAPI::hrvst_token())
 
   if (!rlang::is_null(queries)) {
     httr2::req_url_query(req_obj, !!!queries)
@@ -70,7 +70,7 @@ harvest_GET <- function(base_url = NULL, headers = NULL,
 #'
 #' @description
 #' This is the primary function used to gather resources from the
-#' Harvest API v2. It uses [hRvstAPI::harvest_GET()] to construct
+#' Harvest API v2. It uses [hRvstAPI::hrvst_GET()] to construct
 #' an [httr2::request()] and then performs that request after
 #' modifying the URL.
 #'
@@ -108,15 +108,15 @@ harvest_GET <- function(base_url = NULL, headers = NULL,
 #' - **time reports**
 #'     (via [Reports API](https://help.getharvest.com/api-v2/reports-api/))
 #' @param all_pages A boolean -- should all pages be gathered for a requested resource? (default value TRUE)
-#' @param base_url -- A string -- the common URL component for Harvest API v2 requests, passed to [hRvstAPI::harvest_GET()].
-#' @param headers A list -- the headers required for authentication of each Harvest API v2 request, passed to [hRvstAPI::harvest_GET()].
-#' @param ... A named list of (optional) additional query parameters, passed to [hRvstAPI::harvest_GET()].
+#' @param base_url -- A string -- the common URL component for Harvest API v2 requests, passed to [hRvstAPI::hrvst_GET()].
+#' @param headers A list -- the headers required for authentication of each Harvest API v2 request, passed to [hRvstAPI::hrvst_GET()].
+#' @param ... A named list of (optional) additional query parameters, passed to [hRvstAPI::hrvst_GET()].
 #'
 #' @return A [tibble::tibble()] of all response content.
 #' @export
 #'
 #' @seealso [Harvest API V2 Documentation | Rate Limiting](https://help.getharvest.com/api-v2/introduction/overview/general/#rate-limiting)
-harvest_req <- function(resource = NULL, all_pages = TRUE,
+hrvst_req <- function(resource = NULL, all_pages = TRUE,
                         base_url = NULL, headers = NULL,
                         is_active = NULL, ...) {
   assertthat::assert_that(
@@ -124,8 +124,7 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
     msg = "Argument all_pages must be TRUE or FALSE."
   )
 
-  resource_arg <- match.arg(
-    resource,
+  resource_arg <- match.arg(resource,
     c(
       NULL,
       "clients",
@@ -141,8 +140,7 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
     )
   )
 
-  resource_path <- switch(
-    resource_arg,
+  resource_path <- switch(resource_arg,
     NULL = NULL,
     "clients" = "clients",
     "projects" = "projects",
@@ -161,9 +159,9 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
   # Harvest API v2 Rate Limiting
   # https://help.getharvest.com/api-v2/introduction/overview/general/#rate-limiting
   if (grepl("report", resource_arg)) {
-    rate_limit <- 100/(15*60) # 100 requests per 15 minutes for reports API
+    rate_limit <- 100 / (15 * 60) # 100 requests per 15 minutes for reports API
   } else {
-    rate_limit <- 100/15 # 100 requests per 15 seconds for general API
+    rate_limit <- 100 / 15 # 100 requests per 15 seconds for general API
   }
 
   if (any(grepl("page", names(list(...))))) {
@@ -195,7 +193,7 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
       dplyr::mutate(resp_page = .parsed_resp$page)
   }
 
-  first_req <- hRvstAPI::harvest_GET(
+  first_req <- hrvst_GET(
     base_url = base_url,
     headers = headers,
     is_active = is_active,
@@ -219,7 +217,7 @@ harvest_req <- function(resource = NULL, all_pages = TRUE,
 
   if (all_pages) {
     while (!rlang::is_null(next_link)) {
-      resp <- hRvstAPI::harvest_GET(base_url = next_link) |>
+      resp <- hrvst_GET(base_url = next_link) |>
         perform_and_parse()
       all_resp <- c(all_resp, list(resp))
       next_link <- resp$links[["next"]]

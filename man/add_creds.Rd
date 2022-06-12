@@ -4,8 +4,11 @@
 \alias{add_creds}
 \title{Add user credentials to the keyring.}
 \usage{
-add_creds()
+add_creds(.report = NULL)
+}
+\arguments{
+\item{.report}{A list -- report returned from hRvstAPI::check_creds()}
 }
 \description{
-Add user credentials to the keyring.
+This is intended to be a helper function for setting credentials.
 }

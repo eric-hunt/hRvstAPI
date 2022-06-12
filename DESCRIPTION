@@ -13,15 +13,18 @@ RoxygenNote: 7.2.0.9000
 Depends: R (>= 4.1)
 Imports: 
     assertthat,
+    dplyr,
     getPass,
     httr2,
     keyring,
     purrr,
     readr,
     rlang,
-    stringr
+    stringr,
+    tibble
 Collate: 
     'params.R'
     'creds.R'
     'req.R'
+    'store.R'
     'zzz.R'

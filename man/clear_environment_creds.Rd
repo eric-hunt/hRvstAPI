@@ -7,5 +7,5 @@
 clear_environment_creds()
 }
 \description{
-Delete all hRvstAPI Harvest credentials from the environment.
+This is intended to be a helper function for setting credentials.
 }
