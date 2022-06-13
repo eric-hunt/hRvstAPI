@@ -47,6 +47,8 @@ hrvst_GET <- function(base_url = NULL, headers = NULL,
     )
   }
 
+  # TODO maybe add ability to query 'updated_since' with relative time
+  # e.g. 2L (months) prior to `lubridate::today()`
   if (missing(...) && (missing(is_active) || rlang::is_null(is_active))) {
     queries <- NULL
   } else {
@@ -127,31 +129,41 @@ hrvst_req <- function(resource = NULL, all_pages = TRUE,
   resource_arg <- match.arg(resource,
     c(
       NULL,
+      "users",
       "clients",
       "projects",
       "tasks",
-      "users",
+      "project assignments",
       "user assignments",
       "task assignments",
-      "project assignments",
+      # TODO add 'updated_since' parameter
       "time entries",
-      "budget report",
-      "time report"
+      "budget report"
+      # TODO needs 'from' and 'to' parameters
+      # "client time report",
+      # "project time report",
+      # "team time report",
+      # "task time report"
     )
   )
 
   resource_path <- switch(resource_arg,
     NULL = NULL,
+    "users" = "users",
     "clients" = "clients",
     "projects" = "projects",
     "tasks" = "tasks",
-    "users" = "users",
+    "project assignments" = "users",
     "user assignments" = "user_assignments",
     "task assignments" = "task_assignments",
-    "project assignments" = "users",
-    "time" = "time_entries",
-    "budget report" = "budget_report",
-    "time report" = "time_report"
+    # TODO add 'updated_since' parameter
+    "time entries" = "time_entries",
+    "budget report" = "reports/project_budget"
+    # TODO needs 'from' and 'to' parameters
+    # "client time report" = "reports/time/clients",
+    # "project time report" = "reports/time/projects",
+    # "team time report" = "reports/time/team",
+    # "task time report" = "reports/time/tasks"
   )
 
   # TODO expand path for user project assignments for all users
