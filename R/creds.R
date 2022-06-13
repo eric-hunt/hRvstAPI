@@ -104,8 +104,10 @@ add_creds <- function(.report = NULL) {
   report <- .report
 
   if (shiny::isRunning()) {
+    # If a Shiny app is using this API wrapper add creds this way..
     # TODO retrieve with a `shiny` modal..
-  } else {
+  } else if(report$session_interactive) {
+    # ..otherwise add creds this way..
     add_acct_id <- function(message = "Please enter your Harvest account ID.") {
       stringr::str_remove(
         stringr::str_squish(
@@ -114,7 +116,6 @@ add_creds <- function(.report = NULL) {
         pattern = " "
       )
     }
-
     acct_id <- add_acct_id()
     # Give three tries to add the account ID..
     acct_id_test <- isTRUE(!is.null(acct_id) && nzchar(acct_id))
@@ -137,7 +138,6 @@ add_creds <- function(.report = NULL) {
         pattern = " "
       )
     }
-
     token <- add_token()
     # Give three tries to add the PAT..
     token_test <- isTRUE(!is.null(token) && nzchar(token))
@@ -151,22 +151,23 @@ add_creds <- function(.report = NULL) {
       )
       token_tries <- token_tries + 1
     }
-  }
 
-  if (report$keyring_supported) {
-    # Set the values to the keyring..
-    keyring::key_set_with_value(
-      service = hRvstAPI::.service,
-      username = acct_id,
-      password = token
-    )
-    message("Credentials have been saved to the system keyring.")
-  } else if (!report$keyring_supported) {
-    # Set values to the environment..
-    Sys.setenv("HRVST_ACCT_ID" = acct_id)
-    Sys.setenv("HRVST_TOKEN" = token)
-    message("Keyring not supported.\n
+    # Assign the values to the keyring or environment..
+    if (report$keyring_supported) {
+      # Set the values to the keyring..
+      keyring::key_set_with_value(
+        service = hRvstAPI::.service,
+        username = acct_id,
+        password = token
+      )
+      message("Credentials have been saved to the system keyring.")
+    } else if (!report$keyring_supported) {
+      # Set values to the environment..
+      Sys.setenv("HRVST_ACCT_ID" = acct_id)
+      Sys.setenv("HRVST_TOKEN" = token)
+      message("Keyring not supported.\n
             Credentials have been set in the environment.")
+    }
   } else {
     stop("Unable to add credentials to keyring or environment.\n
          Try setting credentials in .Renviron.")
@@ -182,6 +183,7 @@ add_creds <- function(.report = NULL) {
 #' @param .report A list -- report returned from hRvstAPI::check_creds()
 #'
 retrieve_creds <- function(.report = NULL) {
+  message("Attempting to retrieve credentials from system keyring.")
   assertthat::assert_that(
     !is.null(.report),
     msg = "No `check_creds()` report provided to `retrieve_creds()`."
@@ -198,17 +200,22 @@ retrieve_creds <- function(.report = NULL) {
   }
 
   if (report$keyring_supported) {
-    if (report$creds_in_keyring && !report$too_many_creds) {
+    if (!report$creds_in_keyring) {
+      add_creds(report)
       cred_setter()
-    }
-    if (report$too_many_creds) {
+    } else if (report$creds_in_keyring && !report$too_many_creds) {
+      cred_setter()
+    } else if (report$too_many_creds) {
       # TODO add user agreement to clear creds from keyring
       clear_keyring_creds()
       add_creds(report)
       cred_setter()
+    } else {
+      stop("Unable to retrieve credentials from keyring.\n
+         Try setting credentials in .Renviron.")
     }
   } else {
-    add_creds()()
+    add_creds(report)
   }
 }
 
@@ -240,9 +247,7 @@ set_creds <- function() {
       stop("Something is wrong with the user credentials.
            Consider setting in .Renviron.")
     }
-  }
-
-  if (report$session_interactive) {
+  } else if (report$session_interactive) {
     # If a user is present..
     if (report$creds_already_exist) {
       # ..and credentials exist in .Renviron..
