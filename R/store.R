@@ -1,7 +1,8 @@
-#' Title
+#' Download Harvest API v2 requests into a local file.
 #'
 #' @param ...
 #' @param path
+#' @param sql_colnames
 #'
 #' @return
 #' @export

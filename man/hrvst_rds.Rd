@@ -2,13 +2,13 @@
 % Please edit documentation in R/store.R
 \name{hrvst_rds}
 \alias{hrvst_rds}
-\title{Title}
+\title{Download Harvest API v2 requests into a local file.}
 \usage{
-hrvst_rds(..., path = NULL)
+hrvst_rds(..., path = NULL, sql_colnames = TRUE)
 }
 \arguments{
-\item{path}{}
+\item{sql_colnames}{}
 }
 \description{
-Title
+Download Harvest API v2 requests into a local file.
 }

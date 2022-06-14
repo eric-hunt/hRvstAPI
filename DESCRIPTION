@@ -16,7 +16,6 @@ Imports:
     dplyr,
     getPass,
     httr2,
-    keyring,
     purrr,
     readr,
     rlang,
@@ -28,3 +27,5 @@ Collate:
     'req.R'
     'store.R'
     'zzz.R'
+Suggests: 
+    keyring

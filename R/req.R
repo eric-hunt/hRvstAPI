@@ -11,6 +11,7 @@ NULL
 #'
 #' @param base_url A string -- the common URL component for Harvest API v2 requests. (default value NULL will refer to hRvstAPI::.url)
 #' @param headers A list -- the headers required for authentication of each Harvest API v2 request.
+#' @param is_active
 #' @param ... A named list of (optional) additional query parameters.
 #'
 #' @return An HTTP response: an S3 list with class `httr2_request`.
@@ -47,8 +48,7 @@ hrvst_GET <- function(base_url = NULL, headers = NULL,
     )
   }
 
-  # TODO maybe add ability to query 'updated_since' with relative time
-  # e.g. 2L (months) prior to `lubridate::today()`
+  # TODO expand to support other query parameters..
   if (missing(...) && (missing(is_active) || rlang::is_null(is_active))) {
     queries <- NULL
   } else {
@@ -112,6 +112,7 @@ hrvst_GET <- function(base_url = NULL, headers = NULL,
 #' @param all_pages A boolean -- should all pages be gathered for a requested resource? (default value TRUE)
 #' @param base_url -- A string -- the common URL component for Harvest API v2 requests, passed to [hRvstAPI::hrvst_GET()].
 #' @param headers A list -- the headers required for authentication of each Harvest API v2 request, passed to [hRvstAPI::hrvst_GET()].
+#' @param is_active
 #' @param ... A named list of (optional) additional query parameters, passed to [hRvstAPI::hrvst_GET()].
 #'
 #' @return A [tibble::tibble()] of all response content.
@@ -167,8 +168,6 @@ hrvst_req <- function(resource = NULL, all_pages = TRUE,
     # "team time report" = "reports/time/team",
     # "task time report" = "reports/time/tasks"
   )
-
-  # TODO expand path for user project assignments for all users
 
   # Harvest API v2 Rate Limiting
   # https://help.getharvest.com/api-v2/introduction/overview/general/#rate-limiting
