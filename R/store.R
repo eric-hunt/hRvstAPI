@@ -5,11 +5,15 @@
 #'
 #' @return
 #' @export
-hrvst_rds <- function(..., path = NULL) {
+hrvst_rds <- function(..., path = NULL, sql_colnames = TRUE) {
   if (missing(path) || is.null(path)) {
     path <- "~/hRvst_data.rds"
   }
 
+  assertthat::assert_that(
+    rlang::is_bool(sql_colnames),
+    msg = "Argument sql_colnames should be TRUE or FALSE."
+  )
 
   if (missing(...) || is.null(...)) {
     resources <- list(
@@ -33,6 +37,19 @@ hrvst_rds <- function(..., path = NULL) {
       hrvst_req(req_string)
     }
   )
+
+  if (sql_colnames) {
+    data <- purrr::map(
+      data,
+      function(df) {
+        dplyr::rename_with(
+          df,
+          .fn = \(x) stringr::str_replace(x, "\\.", "_"),
+          .cols = tidyselect::contains(".")
+        )
+      }
+    )
+  }
 
   if (rlang::is_interactive()) {
     View(data)
