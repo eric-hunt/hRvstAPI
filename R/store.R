@@ -10,8 +10,35 @@ hrvst_rds <- function(..., path = NULL) {
     path <- "~/hRvst_data.rds"
   }
 
-  resources <- purrr::set_names(list(...))
-  print(resources)
+
+  if (missing(...) || is.null(...)) {
+    resources <- list(
+      `users` = "users",
+      `clients` = "clients",
+      `projects` = "projects",
+      `tasks` = "tasks",
+      `project_assignments` = "project assignments",
+      `user_assignments` = "user assignments",
+      `task_assignments` = "task assignments",
+      `time_entries` = "time entries",
+      `project_budget_report` = "budget report"
+    )
+  } else {
+    resources <- purrr::set_names(list(...))
+  }
+
+  data <- purrr::map(
+    resources,
+    function(req_string) {
+      hrvst_req(req_string)
+    }
+  )
+
+  if (rlang::is_interactive()) {
+    View(data)
+  }
+
+  readr::write_rds(data, file = path)
 }
 
 
