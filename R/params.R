@@ -20,3 +20,7 @@ NULL
 #' @export
 #' @rdname params
 .agent <- "https://github.com/eric-hunt/hRvstAPI"
+
+#' @export
+#' @rdname params
+.rds_path <- "~/hRvst_data.rds"

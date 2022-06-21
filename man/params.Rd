@@ -6,8 +6,11 @@
 \alias{.service}
 \alias{.url}
 \alias{.agent}
+\alias{.rds_path}
 \title{hRvstAPI parameters}
 \format{
+An object of class \code{character} of length 1.
+
 An object of class \code{character} of length 1.
 
 An object of class \code{character} of length 1.
@@ -20,6 +23,8 @@ An object of class \code{character} of length 1.
 .url
 
 .agent
+
+.rds_path
 }
 \description{
 These are common values used by hRvstAPI functions like the base URL for

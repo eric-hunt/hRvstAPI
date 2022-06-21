@@ -8,7 +8,7 @@
 #' @export
 hrvst_rds <- function(..., path = NULL, sql_colnames = TRUE) {
   if (missing(path) || is.null(path)) {
-    path <- "~/hRvst_data.rds"
+    path <- hRvstAPI::.rds_path
   }
 
   assertthat::assert_that(
@@ -70,7 +70,7 @@ hrvst_rds <- function(..., path = NULL, sql_colnames = TRUE) {
 #' @export
 hrvst_db <- function(rds_file = NULL, path = NULL) {
   if (missing(rds_file) || is.null(rds_file)) {
-    rds_file <- "~/hRvst_data.rds"
+    rds_file <- hRvstAPI::.rds_path
   }
 
 }
