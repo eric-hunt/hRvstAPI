@@ -81,11 +81,22 @@ hrvst_db <- function(rds_file = NULL, path = NULL) {
 
   has_key <- purrr::map(columns, \(x) {any(grepl("^id$", x, perl = TRUE))})
 
-  purrr::pwalk(
+  purrr::pmap(
     list(tables, import, columns, has_key),
     function(nm, df, cols, keyed) {
-      list("data" = df, "columns" = cols, "has_key" = keyed)
-      str(cols)
+      if (keyed) {
+        glue::glue(
+          "CREATE TABLE {nm}(
+            {glue::glue_collapse(cols, sep = ', ')}, INTEGER PRIMARY KEY (id)
+            );"
+        )
+      } else {
+        glue::glue(
+          "CREATE TABLE {nm}(
+          {glue::glue_collapse(cols, sep = ', ')}
+            );"
+        )
+      }
     }
   ) |> purrr::set_names(tables)
 }
