@@ -81,5 +81,11 @@ hrvst_db <- function(rds_file = NULL, path = NULL) {
 
   has_key <- purrr::map(columns, \(x) {any(grepl("^id$", x, perl = TRUE))})
 
-  purrr::map(list(import, tables, columns, has_key), length)
+  purrr::pwalk(
+    list(tables, import, columns, has_key),
+    function(nm, df, cols, keyed) {
+      list("data" = df, "columns" = cols, "has_key" = keyed)
+      str(cols)
+    }
+  ) |> purrr::set_names(tables)
 }
