@@ -73,4 +73,13 @@ hrvst_db <- function(rds_file = NULL, path = NULL) {
     rds_file <- hRvstAPI::.rds_path
   }
 
+  import <- readr::read_rds(rds_file)
+
+  tables <- names(import)
+
+  columns <- purrr::map(import, colnames)
+
+  has_key <- purrr::map(columns, \(x) {any(grepl("^id$", x, perl = TRUE))})
+
+  purrr::map(list(import, tables, columns, has_key), length)
 }
