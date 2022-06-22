@@ -89,10 +89,10 @@ hrvst_db <- function(rds_file = NULL, path = NULL) {
           stringr::str_replace(cols, "^id$", "id INTEGER PRIMARY KEY"),
           sep = ", "
         )
-        glue::glue("CREATE TABLE {nm}({cols});")
+        glue::glue("CREATE TABLE IF NOT EXISTS {nm}({cols});")
       } else {
         cols <- glue::glue_collapse(cols, sep = ", ")
-        glue::glue("CREATE TABLE {nm}({cols});")
+        glue::glue("CREATE TABLE IF NOT EXISTS {nm}({cols});")
       }
     }
   ) |> purrr::set_names(tables)
