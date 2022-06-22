@@ -85,17 +85,14 @@ hrvst_db <- function(rds_file = NULL, path = NULL) {
     list(tables, import, columns, has_key),
     function(nm, df, cols, keyed) {
       if (keyed) {
-        glue::glue(
-          "CREATE TABLE {nm}(
-            {glue::glue_collapse(cols, sep = ', ')}, INTEGER PRIMARY KEY (id)
-            );"
+        cols <- glue::glue_collapse(
+          stringr::str_replace(cols, "^id$", "id INTEGER PRIMARY KEY"),
+          sep = ", "
         )
+        glue::glue("CREATE TABLE {nm}({cols});")
       } else {
-        glue::glue(
-          "CREATE TABLE {nm}(
-          {glue::glue_collapse(cols, sep = ', ')}
-            );"
-        )
+        cols <- glue::glue_collapse(cols, sep = ", ")
+        glue::glue("CREATE TABLE {nm}({cols});")
       }
     }
   ) |> purrr::set_names(tables)
