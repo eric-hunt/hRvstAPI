@@ -97,7 +97,12 @@ hrvst_db <- function(rds_file = NULL, path = NULL) {
     }
   ) |> purrr::set_names(tables)
 
+  # Connect to db..
   dbconn <- DBI::dbConnect(RSQLite::SQLite(), dbname = hRvstAPI::.db_path)
+
+  # Disconnect from db and confirm on exit..
+  on.exit(DBI::dbDisconnect(dbconn))
+  on.exit(cat("Connection closed? ", !DBI::dbIsValid(dbconn), "\n"), add = TRUE)
 
   print(dbconn)
 
@@ -111,6 +116,4 @@ hrvst_db <- function(rds_file = NULL, path = NULL) {
   )
 
   print(RSQLite::dbListTables(dbconn))
-
-  DBI::dbDisconnect(dbconn)
 }
