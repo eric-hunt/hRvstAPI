@@ -81,7 +81,7 @@ hrvst_db <- function(rds_file = NULL, path = NULL) {
 
   has_key <- purrr::map(columns, \(x) {any(grepl("^id$", x, perl = TRUE))})
 
-  purrr::pmap(
+  statements <- purrr::pmap(
     list(tables, import, columns, has_key),
     function(nm, df, cols, keyed) {
       if (keyed) {
@@ -96,4 +96,21 @@ hrvst_db <- function(rds_file = NULL, path = NULL) {
       }
     }
   ) |> purrr::set_names(tables)
+
+  dbconn <- DBI::dbConnect(RSQLite::SQLite(), dbname = hRvstAPI::.db_path)
+
+  print(dbconn)
+
+  print(DBI::dbGetInfo(dbconn))
+
+  print(statements)
+
+  purrr::walk(
+    statements,
+    \(stmnt) RSQLite::dbExecute(conn = dbconn, statement = stmnt)
+  )
+
+  print(RSQLite::dbListTables(dbconn))
+
+  DBI::dbDisconnect(dbconn)
 }
