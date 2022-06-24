@@ -24,9 +24,8 @@ hrvst_rds <- function(..., path = NULL, sql_colnames = TRUE) {
       `tasks` = "tasks",
       `project_assignments` = "project assignments",
       `user_assignments` = "user assignments",
-      `task_assignments` = "task assignments",
-      `time_entries` = "time entries",
-      `project_budget_report` = "budget report"
+      `task_assignments` = "task assignments"#,
+      # `time_entries` = "time entries"
     )
   } else {
     resources <- purrr::set_names(list(...))
