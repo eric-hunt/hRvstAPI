@@ -4,9 +4,11 @@
 \alias{hrvst_rds}
 \title{Download Harvest API v2 requests into a local file.}
 \usage{
-hrvst_rds(..., path = NULL, sql_colnames = TRUE)
+hrvst_rds(..., rds_file = NULL, sql_colnames = TRUE)
 }
 \arguments{
+\item{rds_file}{A string -- file path where .rds file containing Harvest API data should be created.}
+
 \item{sql_colnames}{}
 }
 \description{

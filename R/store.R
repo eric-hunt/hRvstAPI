@@ -1,14 +1,14 @@
 #' Download Harvest API v2 requests into a local file.
 #'
 #' @param ...
-#' @param path
+#' @param rds_file A string -- file path where .rds file containing Harvest API data should be created.
 #' @param sql_colnames
 #'
 #' @return
 #' @export
-hrvst_rds <- function(..., path = NULL, sql_colnames = TRUE) {
-  if (missing(path) || is.null(path)) {
-    path <- hRvstAPI::.rds_path
+hrvst_rds <- function(..., rds_file = NULL, sql_colnames = TRUE) {
+  if (missing(rds_file) || is.null(rds_file)) {
+    rds_file <- hRvstAPI::.rds_path
   }
 
   assertthat::assert_that(
@@ -55,19 +55,19 @@ hrvst_rds <- function(..., path = NULL, sql_colnames = TRUE) {
     View(req_data)
   }
 
-  readr::write_rds(req_data, file = path)
+  readr::write_rds(req_data, file = rds_file)
 }
 
 
 
-#' Title
+#' Transfer local Harvest data into SQLite database.
 #'
-#' @param rds_file
-#' @param path
+#' @param rds_file A string -- file path where .rds file containing Harvest API data is located.
+#' @param db_file A string -- file path where .sqlite file containing Harvest API data should be/is located.
 #'
 #' @return
 #' @export
-hrvst_db <- function(rds_file = NULL, path = NULL) {
+hrvst_db <- function(rds_file = NULL, db_file = NULL) {
   if (missing(rds_file) || is.null(rds_file)) {
     rds_file <- hRvstAPI::.rds_path
   }

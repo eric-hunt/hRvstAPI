@@ -2,13 +2,15 @@
 % Please edit documentation in R/store.R
 \name{hrvst_db}
 \alias{hrvst_db}
-\title{Title}
+\title{Transfer local Harvest data into SQLite database.}
 \usage{
-hrvst_db(rds_file = NULL, path = NULL)
+hrvst_db(rds_file = NULL, db_file = NULL)
 }
 \arguments{
-\item{path}{}
+\item{rds_file}{A string -- file path where .rds file containing Harvest API data is located.}
+
+\item{db_file}{A string -- file path where .sqlite file containing Harvest API data should be/is located.}
 }
 \description{
-Title
+Transfer local Harvest data into SQLite database.
 }
