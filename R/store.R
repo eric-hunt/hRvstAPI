@@ -32,7 +32,7 @@ hrvst_rds <- function(..., path = NULL, sql_colnames = TRUE) {
     resources <- purrr::set_names(list(...))
   }
 
-  data <- purrr::map(
+  req_data <- purrr::map(
     resources,
     function(req_string) {
       hrvst_req(req_string)
@@ -40,8 +40,8 @@ hrvst_rds <- function(..., path = NULL, sql_colnames = TRUE) {
   )
 
   if (sql_colnames) {
-    data <- purrr::map(
-      data,
+    req_data <- purrr::map(
+      req_data,
       function(df) {
         dplyr::rename_with(
           df,
@@ -53,10 +53,10 @@ hrvst_rds <- function(..., path = NULL, sql_colnames = TRUE) {
   }
 
   if (rlang::is_interactive()) {
-    View(data)
+    View(req_data)
   }
 
-  readr::write_rds(data, file = path)
+  readr::write_rds(req_data, file = path)
 }
 
 
@@ -73,40 +73,45 @@ hrvst_db <- function(rds_file = NULL, path = NULL) {
     rds_file <- hRvstAPI::.rds_path
   }
 
-  import <- readr::read_rds(rds_file)
-
-  tables <- names(import)
-
-  columns <- purrr::map(import, colnames)
-
+  # import <- readr::read_rds(rds_file)
+  # dfs <- purrr::map(import, \(df) dplyr::select_if(df, \(col) !is.list(col)))
+  dfs <- readr::read_rds(rds_file)
+  tables <- names(dfs)
+  columns <- purrr::map(dfs, colnames)
   has_key <- purrr::map(columns, \(x) {any(grepl("^id$", x, perl = TRUE))})
-
-  statements <- purrr::pmap(
-    list(tables, import, columns, has_key),
-    function(nm, df, cols, keyed) {
-      if (keyed) {
-        cols <- glue::glue_collapse(
-          stringr::str_replace(cols, "^id$", "id INTEGER PRIMARY KEY"),
-          sep = ", "
-        )
-        glue::glue("CREATE TABLE IF NOT EXISTS {nm}({cols});")
-      } else {
-        cols <- glue::glue_collapse(cols, sep = ", ")
-        glue::glue("CREATE TABLE IF NOT EXISTS {nm}({cols});")
-      }
-    }
-  ) |> purrr::set_names(tables)
 
   # Connect to db..
   dbconn <- DBI::dbConnect(RSQLite::SQLite(), dbname = hRvstAPI::.db_path)
+  print(dbconn)
+  print(DBI::dbGetInfo(dbconn))
 
   # Disconnect from db and confirm on exit..
   on.exit(DBI::dbDisconnect(dbconn))
   on.exit(cat("Connection closed? ", !DBI::dbIsValid(dbconn), "\n"), add = TRUE)
 
-  print(dbconn)
-
-  print(DBI::dbGetInfo(dbconn))
+  statements <- purrr::pmap(
+    list(tables, columns, has_key),
+    function(nm, cols, has_key) {
+      if (has_key) {
+        cols <- glue::glue_sql_collapse(
+          stringr::str_replace(cols, "^id$", "id INTEGER PRIMARY KEY"),
+          sep = ", "
+        )
+        cat(nm, ":\n", cols, "\n", "\n")
+        glue::glue_sql(
+          "CREATE TABLE IF NOT EXISTS {nm}({cols});",
+          .con = dbconn
+        )
+      } else {
+        cols <- glue::glue_sql_collapse(cols, sep = ", ")
+        glue::glue_sql(
+          "CREATE TABLE IF NOT EXISTS {nm}({cols});",
+          .con = dbconn
+        )
+        cat(nm, ":\n", cols, "\n", "\n")
+      }
+    }
+  ) |> purrr::set_names(tables)
 
   print(statements)
 

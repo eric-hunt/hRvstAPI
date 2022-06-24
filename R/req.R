@@ -236,7 +236,7 @@ hrvst_req <- function(resource = NULL, all_pages = TRUE,
       next_link <- resp$links[["next"]]
     }
     cat("All", total_pages, "pages were requested.\n")
-    cat(length(all_resp), "pages were successfully downloaded.")
+    cat(length(all_resp), "pages were successfully downloaded.\n\n")
   }
 
   if (!all_pages) {
