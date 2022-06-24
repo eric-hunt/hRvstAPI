@@ -120,4 +120,29 @@ hrvst_db <- function(rds_file = NULL, path = NULL) {
   )
 
   print(RSQLite::dbListTables(dbconn))
+
+  purrr::walk2(
+    tables,
+    dfs,
+    function(tbl, df) {
+      RSQLite::dbWriteTable(
+        conn = dbconn,
+        name = tbl,
+        value = df,
+        overwrite = FALSE,
+        append = TRUE
+      )
+    }
+  )
+
+  purrr::map(
+    tables,
+    function(tblnm) {
+      query <- glue::glue_sql("SELECT * FROM {tblnm} LIMIT 10;", .con = dbconn)
+      print(query)
+      RSQLite::dbGetQuery(dbconn, query)
+    }
+  )
+
+  print(RSQLite::dbListTables(dbconn))
 }
