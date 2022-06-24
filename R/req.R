@@ -203,7 +203,12 @@ hrvst_req <- function(resource = NULL, all_pages = TRUE,
       accessors <- c(1, 1) # need another accessor to enter first level of list
     }
     tibble::as_tibble(purrr::pluck(.parsed_resp, !!!accessors)) |>
-      dplyr::mutate(resp_page = .parsed_resp$page)
+      dplyr::select_if(\(col) !is.list(col)) |>
+      dplyr::mutate(resp_page = .parsed_resp$page) |>
+      dplyr::mutate(dplyr::across(
+        tidyselect::any_of("id"),
+        .fns = bit64::as.integer64
+      ))
   }
 
   first_req <- hrvst_GET(
