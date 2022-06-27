@@ -60,21 +60,25 @@ create_rds <- function(..., rds_path = NULL, sql_colnames = TRUE) {
 
 
 
-#' Transfer local Harvest data into SQLite database.
+#' Create a SQLite database to hold Harvest API v2 request data.
 #'
-#' @param rds_file A string -- file path where .rds file containing Harvest API data is located.
-#' @param db_file A string -- file path where .sqlite file containing Harvest API data should be/is located.
+#' @param db_path
+#' @param rds_path
 #'
 #' @return
 #' @export
-hrvst_db <- function(rds_file = NULL, db_file = NULL) {
-  if (missing(rds_file) || is.null(rds_file)) {
-    rds_file <- hRvstAPI::.rds_path
+#'
+#' @examples
+create_db <- function(db_path = NULL, rds_path = NULL) {
+  if (missing(rds_path) || is.null(rds_path)) {
+    rds_path <- hRvstAPI::.rds_path
+  }
+  if (missing(db_path) || is.null(db_path)) {
+    db_path <- hRvstAPI::.db_path
   }
 
-  # import <- readr::read_rds(rds_file)
-  # dfs <- purrr::map(import, \(df) dplyr::select_if(df, \(col) !is.list(col)))
-  dfs <- readr::read_rds(rds_file)
+
+  dfs <- readr::read_rds(rds_path)
   tables <- names(dfs)
   columns <- purrr::map(dfs, colnames)
   has_key <- purrr::map(columns, \(x) {any(grepl("^id$", x, perl = TRUE))})
