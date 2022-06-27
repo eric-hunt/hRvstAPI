@@ -77,25 +77,24 @@ create_db <- function(db_path = NULL, rds_path = NULL) {
     db_path <- hRvstAPI::.db_path
   }
 
+  dbconn <- withr::local_db_connection(
+    DBI::dbConnect(RSQLite::SQLite(), dbname = db_path)
+  )
+  print(dbconn)
+  withr::defer(cat("\nConnection closed? ", !DBI::dbIsValid(dbconn), "\n"),
+               priority = "last")
 
   dfs <- readr::read_rds(rds_path)
   tables <- names(dfs)
   columns <- purrr::map(dfs, colnames)
-  has_key <- purrr::map(columns, \(x) {any(grepl("^id$", x, perl = TRUE))})
+  has_id <- purrr::map(columns, \(x) {any(grepl("^id$", x, perl = TRUE))})
 
-  # Connect to db..
-  dbconn <- DBI::dbConnect(RSQLite::SQLite(), dbname = hRvstAPI::.db_path)
-  print(dbconn)
-  print(DBI::dbGetInfo(dbconn))
-
-  # Disconnect from db and confirm on exit..
-  on.exit(DBI::dbDisconnect(dbconn))
-  on.exit(cat("Connection closed? ", !DBI::dbIsValid(dbconn), "\n"), add = TRUE)
+  cat("If not present, the following tables (and columns within each) will be created:\n")
 
   statements <- purrr::pmap(
-    list(tables, columns, has_key),
-    function(nm, cols, has_key) {
-      if (has_key) {
+    list(tables, columns, has_id),
+    function(nm, cols, has_id) {
+      if (has_id) {
         cols <- glue::glue_sql_collapse(
           stringr::str_replace(cols, "^id$", "id INTEGER PRIMARY KEY"),
           sep = ", "
@@ -116,14 +115,15 @@ create_db <- function(db_path = NULL, rds_path = NULL) {
     }
   ) |> purrr::set_names(tables)
 
-  print(statements)
-
   purrr::walk(
     statements,
     \(stmnt) RSQLite::dbExecute(conn = dbconn, statement = stmnt)
   )
 
+  cat("The following tables now exist in the database:\n")
   print(RSQLite::dbListTables(dbconn))
+}
+
 
   purrr::walk2(
     tables,
