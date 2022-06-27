@@ -204,11 +204,12 @@ hrvst_req <- function(resource = NULL, all_pages = TRUE,
     }
     tibble::as_tibble(purrr::pluck(.parsed_resp, !!!accessors)) |>
       dplyr::select_if(\(col) !is.list(col)) |>
-      dplyr::mutate(resp_page = .parsed_resp$page) |>
-      dplyr::mutate(dplyr::across(
-        tidyselect::any_of("id"),
-        .fns = bit64::as.integer64
-      ))
+      dplyr::mutate(resp_page = .parsed_resp$page)# |>
+      # dplyr::mutate(dplyr::across(
+      #   tidyselect::any_of("id"),
+      #   .fns = bit64::as.integer64
+      # ))
+      # TODO remove bit64 from imports
   }
 
   first_req <- hrvst_GET(
