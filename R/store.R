@@ -1,14 +1,14 @@
 #' Download Harvest API v2 requests into a local file.
 #'
 #' @param ...
-#' @param rds_file A string -- file path where .rds file containing Harvest API data should be created.
+#' @param rds_path A string -- file path where .rds file containing Harvest API data should be created.
 #' @param sql_colnames
 #'
 #' @return
 #' @export
-hrvst_rds <- function(..., rds_file = NULL, sql_colnames = TRUE) {
-  if (missing(rds_file) || is.null(rds_file)) {
-    rds_file <- hRvstAPI::.rds_path
+create_rds <- function(..., rds_path = NULL, sql_colnames = TRUE) {
+  if (missing(rds_path) || is.null(rds_path)) {
+    rds_path <- hRvstAPI::.rds_path
   }
 
   assertthat::assert_that(
@@ -55,7 +55,7 @@ hrvst_rds <- function(..., rds_file = NULL, sql_colnames = TRUE) {
     View(req_data)
   }
 
-  readr::write_rds(req_data, file = rds_file)
+  readr::write_rds(req_data, file = rds_path)
 }
 
 
