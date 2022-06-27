@@ -188,9 +188,60 @@ get_keys <- function(db_connection, tbl, key = NULL) {
   )[[1]]
 }
 
+
+
+#' Update the local SQLite database with new Harvest API v2 request data.
+#'
+#' @param db_path
+#' @param rds_path
+#'
+#' @return
+#' @export
+#'
+#' @examples
+update_db <- function(db_path = NULL, rds_path = NULL) {
+  if (missing(rds_path) || is.null(rds_path)) {
+    rds_path <- hRvstAPI::.rds_path
+  }
+  if (missing(db_path) || is.null(db_path)) {
+    db_path <- hRvstAPI::.db_path
+  }
+
+  dbconn <- withr::local_db_connection(
+    DBI::dbConnect(RSQLite::SQLite(), dbname = db_path)
+  )
+  print(dbconn)
+  withr::defer(cat("\nConnection closed? ", !DBI::dbIsValid(dbconn), "\n"),
+               priority = "last")
+
+  dfs <- readr::read_rds(rds_path)
+  tables <- names(dfs) |> purrr::set_names() # name with itself
+  columns <- purrr::map(dfs, colnames)
+  has_id <- purrr::map(columns, \(x) {any(grepl("^id$", x, perl = TRUE))})
+  key_cols <- purrr::map(tables, \(tbl) hRvstAPI::key_col(dbconn, tbl))
+  has_key <- purrr::map(key_cols, \(tbl_col) !is.null(tbl_col))
+  existing <- purrr::map2(
+    tables,
+    key_cols,
+    function(tbl, key) {
+      hRvstAPI::get_keys(dbconn, tbl, key)
+    }
+  )
+
+  filtered_dfs <- purrr::pmap(
+    list(has_key, dfs, key_cols, existing),
+    function(bool, df, key_col, vals) {
+      if (bool) {
+        dplyr::filter(df, !(!!rlang::sym(key_col) %in% vals))
+      } else {
+        df
+      }
+    }
+  )
+
   purrr::walk2(
     tables,
-    dfs,
+    filtered_dfs,
     function(tbl, df) {
       RSQLite::dbWriteTable(
         conn = dbconn,
@@ -201,15 +252,4 @@ get_keys <- function(db_connection, tbl, key = NULL) {
       )
     }
   )
-
-  purrr::map(
-    tables,
-    function(tblnm) {
-      query <- glue::glue_sql("SELECT * FROM {tblnm} LIMIT 10;", .con = dbconn)
-      print(query)
-      RSQLite::dbGetQuery(dbconn, query)
-    }
-  )
-
-  print(RSQLite::dbListTables(dbconn))
 }
