@@ -145,6 +145,49 @@ query_db <- function(db_connection, query_string, ...) {
   )
 }
 
+
+
+#' Get the name of the primary key column for a table.
+#'
+#' @param db_connection
+#' @param tbl
+#'
+#' @return
+#' @export
+#'
+#' @examples
+key_col <- function(db_connection, tbl) {
+  tbl_info <- hRvstAPI::query_db(
+    db_connection,
+    "PRAGMA table_info({tbl_name})",
+    tbl_name = tbl
+  )
+  tbl_info[tbl_info$pk == 1, "name"]
+}
+
+
+
+#' Get the unique set of key values that already exist in a table.
+#'
+#' @param db_connection
+#' @param tbl
+#' @param key
+#'
+#' @return
+#' @export
+#'
+#' @examples
+get_keys <- function(db_connection, tbl, key = NULL) {
+  if (missing(key) || is.null(key)) {
+    stop("Cannot get key when key is NULL.")
+  }
+  hRvstAPI::query_db(
+    db_connection,
+    "SELECT DISTINCT {`key_name`} FROM {`tbl_name`}",
+    key_name = key, tbl_name = tbl
+  )[[1]]
+}
+
   purrr::walk2(
     tables,
     dfs,
