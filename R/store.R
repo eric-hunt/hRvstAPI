@@ -125,6 +125,26 @@ create_db <- function(db_path = NULL, rds_path = NULL) {
 }
 
 
+
+#' Query a database and collect/return the result.
+#'
+#' @param db_connection
+#' @param query_string
+#' @param ...
+#'
+#' @return
+#' @export
+#'
+#' @examples
+query_db <- function(db_connection, query_string, ...) {
+  varargs <- rlang::list2(query_string, ..., .con = db_connection)
+  query <- do.call(glue::glue_sql, varargs)
+  DBI::dbGetQuery(
+    db_connection,
+    query
+  )
+}
+
   purrr::walk2(
     tables,
     dfs,
