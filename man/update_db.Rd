@@ -7,7 +7,9 @@
 update_db(db_path = NULL, rds_path = NULL)
 }
 \arguments{
-\item{rds_path}{}
+\item{db_path}{A string -- file path where a local .sqlite file containing Harvest API data should be updated.}
+
+\item{rds_path}{A string -- file path where a local .rds file containing Harvest API data exists.}
 }
 \description{
 Update the local SQLite database with new Harvest API v2 request data.

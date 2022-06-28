@@ -4,13 +4,40 @@
 \alias{create_rds}
 \title{Download Harvest API v2 requests into a local file.}
 \usage{
-create_rds(..., rds_path = NULL, sql_colnames = TRUE)
+create_rds(
+  ...,
+  is_active = NULL,
+  updated_since = NULL,
+  weeks_ago = NULL,
+  from = NULL,
+  to = NULL,
+  rds_path = NULL,
+  sql_colnames = TRUE,
+  .extra_params = NULL
+)
 }
 \arguments{
-\item{rds_path}{A string -- file path where .rds file containing Harvest API data should be created.}
+\item{...}{Resources as "named" key/value pairs to be requested. (\code{\link[=hrvst_req]{hrvst_req()}})}
 
-\item{sql_colnames}{}
+\item{is_active}{A string -- 'true' or 'false' passed to \code{\link[=hrvst_GET]{hrvst_GET()}}.}
+
+\item{updated_since}{A string -- passed to \code{\link[=hrvst_GET]{hrvst_GET()}}.}
+
+\item{weeks_ago}{An integer -- overrides \emph{updated_since} argument; the number of weeks prior to the current week to convert to a date and pass to the 'updated_since' query parameter.}
+
+\item{from}{TODO}
+
+\item{to}{TODO}
+
+\item{rds_path}{A string -- file path where a local .rds file containing Harvest API data should be created.}
+
+\item{sql_colnames}{A boolean -- automatically convert '.' to '_' in column names for easier SQL query construction.}
+
+\item{.extra_params}{Key-value pairs -- optional additional query parameters passed to \code{...} of \code{\link[=hrvst_GET]{hrvst_GET()}}.}
 }
 \description{
 Download Harvest API v2 requests into a local file.
+}
+\seealso{
+\code{\link[=hrvst_req]{hrvst_req()}}
 }

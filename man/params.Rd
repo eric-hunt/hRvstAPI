@@ -16,9 +16,9 @@ An object of class \code{character} of length 1.
 
 An object of class \code{character} of length 1.
 
-An object of class \code{character} of length 1.
+An object of class \code{fs_path} (inherits from \code{character}) of length 1.
 
-An object of class \code{character} of length 1.
+An object of class \code{fs_path} (inherits from \code{character}) of length 1.
 }
 \usage{
 .service

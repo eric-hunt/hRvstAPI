@@ -1,11 +1,20 @@
 #' Download Harvest API v2 requests into a local file.
 #'
-#' @param ...
-#' @param rds_path A string -- file path where .rds file containing Harvest API data should be created.
-#' @param sql_colnames
+#' @param ... Resources as "named" key/value pairs to be requested. ([hRvstAPI::hrvst_req()])
+#' @param is_active A string -- 'true' or 'false' passed to [hRvstAPI::hrvst_GET()].
+#' @param updated_since A string -- passed to [hRvstAPI::hrvst_GET()].
+#' @param weeks_ago An integer -- overrides *updated_since* argument; the number of weeks prior to the current week to convert to a date and pass to the 'updated_since' query parameter.
+#' @param from TODO
+#' @param to TODO
+#' @param rds_path A string -- file path where a local .rds file containing Harvest API data should be created.
+#' @param sql_colnames A boolean -- automatically convert '.' to '_' in column names for easier SQL query construction.
+#' @param .extra_params Key-value pairs -- optional additional query parameters passed to `...` of [hRvstAPI::hrvst_GET()].
 #'
 #' @return
 #' @export
+#'
+#' @seealso [hRvstAPI::hrvst_req()]
+#'
 create_rds <- function(..., is_active = NULL, updated_since = NULL,
                        weeks_ago = NULL, from = NULL, to = NULL,
                        rds_path = NULL, sql_colnames = TRUE,
@@ -73,13 +82,12 @@ create_rds <- function(..., is_active = NULL, updated_since = NULL,
 
 #' Create a SQLite database to hold Harvest API v2 request data.
 #'
-#' @param db_path
-#' @param rds_path
+#' @param db_path A string -- file path where a local .sqlite file containing Harvest API data should be created.
+#' @param rds_path A string -- file path where a local .rds file containing Harvest API data exists.
 #'
 #' @return
 #' @export
 #'
-#' @examples
 create_db <- function(db_path = NULL, rds_path = NULL) {
   if (is.null(rds_path)) {
     rds_path <- hRvstAPI::.rds_path
@@ -139,14 +147,13 @@ create_db <- function(db_path = NULL, rds_path = NULL) {
 
 #' Query a database and collect/return the result.
 #'
-#' @param db_connection
-#' @param query_string
+#' @param db_connection A DBI compatible connection object -- the database containing Harvest API v2 request data.
+#' @param query_string A string -- the query to be executed on *db_connection*.
 #' @param ...
 #'
 #' @return
 #' @export
 #'
-#' @examples
 query_db <- function(db_connection, query_string, ...) {
   varargs <- rlang::list2(query_string, ..., .con = db_connection)
   query <- do.call(glue::glue_sql, varargs)
@@ -160,13 +167,12 @@ query_db <- function(db_connection, query_string, ...) {
 
 #' Get the name of the primary key column for a table.
 #'
-#' @param db_connection
-#' @param tbl
+#' @param db_connection A DBI compatible connection object -- the database containing Harvest API v2 request data.
+#' @param tbl A string -- name of the table for which to determine the primary key column.
 #'
-#' @return
+#' @return A string -- the primary key column of *tbl*.
 #' @export
 #'
-#' @examples
 key_col <- function(db_connection, tbl) {
   tbl_info <- hRvstAPI::query_db(
     db_connection,
@@ -180,14 +186,13 @@ key_col <- function(db_connection, tbl) {
 
 #' Get the unique set of key values that already exist in a table.
 #'
-#' @param db_connection
-#' @param tbl
-#' @param key
+#' @param db_connection A DBI compatible connection object -- the database containing Harvest API v2 request data.
+#' @param tbl A string -- name of the table from which to gather primary keys.
+#' @param key A string -- name of the primary key column in *tbl*.
 #'
-#' @return
+#' @return A numeric vector -- a vector of integer primary keys which currently exist in *tbl*.
 #' @export
 #'
-#' @examples
 get_keys <- function(db_connection, tbl, key = NULL) {
   if (is.null(key)) {
     stop("Cannot get key when key is NULL.")
@@ -203,13 +208,12 @@ get_keys <- function(db_connection, tbl, key = NULL) {
 
 #' Update the local SQLite database with new Harvest API v2 request data.
 #'
-#' @param db_path
-#' @param rds_path
+#' @param db_path A string -- file path where a local .sqlite file containing Harvest API data should be updated.
+#' @param rds_path A string -- file path where a local .rds file containing Harvest API data exists.
 #'
 #' @return
 #' @export
 #'
-#' @examples
 update_db <- function(db_path = NULL, rds_path = NULL) {
   if (is.null(rds_path)) {
     rds_path <- hRvstAPI::.rds_path

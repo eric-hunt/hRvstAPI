@@ -7,7 +7,12 @@
 key_col(db_connection, tbl)
 }
 \arguments{
-\item{tbl}{}
+\item{db_connection}{A DBI compatible connection object -- the database containing Harvest API v2 request data.}
+
+\item{tbl}{A string -- name of the table for which to determine the primary key column.}
+}
+\value{
+A string -- the primary key column of \emph{tbl}.
 }
 \description{
 Get the name of the primary key column for a table.

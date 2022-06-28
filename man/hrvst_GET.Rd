@@ -15,15 +15,19 @@ hrvst_GET(
 )
 }
 \arguments{
-\item{url}{A string -- the URL component for Harvest API v2 requests. (NULL will default to hRvstAPI::.url)}
+\item{url}{A string -- the URL component for Harvest API v2 requests (NULL will default to \link{.url}).}
 
-\item{headers}{A list -- the headers required for authentication of each Harvest API v2 request.}
+\item{headers}{A list -- the headers required for authentication of each Harvest API v2 request: 'Harvest-Account-Id', 'Authorization' (PAT), and 'User-Agent' (this package GitHub repo, \link{.agent}).}
 
-\item{is_active}{A string -- 'true' or 'false', boolean per Harvest API requirement.}
+\item{is_active}{A string -- 'true' or 'false' (boolean per Harvest API requirement) should only active ('true') or inactive ('false') records be requested; default NULL downloads all records.}
 
-\item{to}{}
+\item{updated_since}{A string -- a date or date/time value (in ISO8601 character format) indicated how far back in time to retrieve records. Not supported by all of the Harvest v2 APIs.}
 
-\item{...}{A named list of (optional) additional query parameters.}
+\item{from}{TODO}
+
+\item{to}{TODO}
+
+\item{...}{Key-value pairs -- optional additional query parameters.}
 }
 \value{
 An HTTP response: an S3 list with class \code{httr2_request}.

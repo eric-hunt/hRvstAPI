@@ -9,17 +9,18 @@ NULL
 #' these important headers are set by the `hRvstAPI::hrvst_acct_id()`,
 #' `hRvstAPI::hrvst_token()`, and `hRvstAPI::.agent` objects.
 #'
-#' @param url A string -- the URL component for Harvest API v2 requests. (NULL will default to hRvstAPI::.url)
-#' @param headers A list -- the headers required for authentication of each Harvest API v2 request.
-#' @param is_active A string -- 'true' or 'false', boolean per Harvest API requirement.
-#' @param ... A named list of (optional) additional query parameters.
-#' @param updated_since
-#' @param from
-#' @param to
+#' @param url A string -- the URL component for Harvest API v2 requests (NULL will default to [hRvstAPI::.url]).
+#' @param headers A list -- the headers required for authentication of each Harvest API v2 request: 'Harvest-Account-Id', 'Authorization' (PAT), and 'User-Agent' (this package GitHub repo, [hRvstAPI::.agent]).
+#' @param is_active A string -- 'true' or 'false' (boolean per Harvest API requirement) should only active ('true') or inactive ('false') records be requested; default NULL downloads all records.
+#' @param updated_since A string -- a date or date/time value (in ISO8601 character format) indicated how far back in time to retrieve records. Not supported by all of the Harvest v2 APIs.
+#' @param from TODO
+#' @param to TODO
+#' @param ... Key-value pairs -- optional additional query parameters.
 #'
 #' @return An HTTP response: an S3 list with class `httr2_request`.
 #'
 #' @seealso [httr2::request()]
+#'
 hrvst_GET <- function(url = NULL, headers = NULL,
                       is_active = NULL, updated_since = NULL,
                       from = NULL, to = NULL, ...) {
@@ -134,18 +135,20 @@ hrvst_GET <- function(url = NULL, headers = NULL,
 #'     (via [Reports API](https://help.getharvest.com/api-v2/reports-api/))
 #' @param all_pages A boolean -- should all pages be gathered for a requested resource? (default value TRUE)
 #' @param base_url -- A string -- the common URL component for Harvest API v2 requests, passed to [hRvstAPI::hrvst_GET()].
-#' @param headers A list -- the headers required for authentication of each Harvest API v2 request, passed to [hRvstAPI::hrvst_GET()].
-#' @param is_active
-#' @param ... A named list of (optional) additional query parameters, passed to [hRvstAPI::hrvst_GET()].
-#' @param updated_since
-#' @param weeks_ago
-#' @param from
-#' @param to
+#' @param headers A list -- passed to [hRvstAPI::hrvst_GET()].
+#' @param is_active A string -- 'true' or 'false' passed to [hRvstAPI::hrvst_GET()].
+#' @param updated_since A string -- passed to [hRvstAPI::hrvst_GET()].
+#' @param weeks_ago An integer -- overrides *updated_since* argument; the number of weeks prior to the current week to convert to a date and pass to the 'updated_since' query parameter.
+#' @param from TODO
+#' @param to TODO
+#' @param ... Key-value pairs -- passed to [hRvstAPI::hrvst_GET()].
+
 #'
 #' @return A [tibble::tibble()] of all response content.
 #' @export
 #'
 #' @seealso [Harvest API V2 Documentation | Rate Limiting](https://help.getharvest.com/api-v2/introduction/overview/general/#rate-limiting)
+#'
 hrvst_req <- function(resource = NULL, all_pages = TRUE,
                       base_url = NULL, headers = NULL,
                       is_active = "true",

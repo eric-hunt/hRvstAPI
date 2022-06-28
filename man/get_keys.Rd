@@ -7,7 +7,14 @@
 get_keys(db_connection, tbl, key = NULL)
 }
 \arguments{
-\item{key}{}
+\item{db_connection}{A DBI compatible connection object -- the database containing Harvest API v2 request data.}
+
+\item{tbl}{A string -- name of the table from which to gather primary keys.}
+
+\item{key}{A string -- name of the primary key column in \emph{tbl}.}
+}
+\value{
+A numeric vector -- a vector of integer primary keys which currently exist in \emph{tbl}.
 }
 \description{
 Get the unique set of key values that already exist in a table.

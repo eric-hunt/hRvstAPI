@@ -7,6 +7,10 @@
 query_db(db_connection, query_string, ...)
 }
 \arguments{
+\item{db_connection}{A DBI compatible connection object -- the database containing Harvest API v2 request data.}
+
+\item{query_string}{A string -- the query to be executed on \emph{db_connection}.}
+
 \item{...}{}
 }
 \description{

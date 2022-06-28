@@ -49,11 +49,19 @@ hrvst_req(
 
 \item{base_url}{-- A string -- the common URL component for Harvest API v2 requests, passed to \code{\link[=hrvst_GET]{hrvst_GET()}}.}
 
-\item{headers}{A list -- the headers required for authentication of each Harvest API v2 request, passed to \code{\link[=hrvst_GET]{hrvst_GET()}}.}
+\item{headers}{A list -- passed to \code{\link[=hrvst_GET]{hrvst_GET()}}.}
 
-\item{to}{}
+\item{is_active}{A string -- 'true' or 'false' passed to \code{\link[=hrvst_GET]{hrvst_GET()}}.}
 
-\item{...}{A named list of (optional) additional query parameters, passed to \code{\link[=hrvst_GET]{hrvst_GET()}}.}
+\item{updated_since}{A string -- passed to \code{\link[=hrvst_GET]{hrvst_GET()}}.}
+
+\item{weeks_ago}{An integer -- overrides \emph{updated_since} argument; the number of weeks prior to the current week to convert to a date and pass to the 'updated_since' query parameter.}
+
+\item{from}{TODO}
+
+\item{to}{TODO}
+
+\item{...}{Key-value pairs -- passed to \code{\link[=hrvst_GET]{hrvst_GET()}}.}
 }
 \value{
 A \code{\link[tibble:tibble]{tibble::tibble()}} of all response content.
