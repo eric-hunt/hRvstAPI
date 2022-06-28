@@ -17,10 +17,11 @@ NULL
 #' @return An HTTP response: an S3 list with class `httr2_request`.
 #'
 #' @seealso [httr2::request()]
-hrvst_GET <- function(base_url = NULL, headers = NULL,
-                        is_active = NULL, ...) {
-  if (missing(base_url) || rlang::is_null(base_url)) {
-    base_url <- hRvstAPI::.url
+hrvst_GET <- function(url = NULL, headers = NULL,
+                      is_active = NULL, updated_since = NULL,
+                      from = NULL, to = NULL, ...) {
+  if (is.null(url)) {
+    url <- hRvstAPI::.url
   }
 
   common_headers <- c(
@@ -48,14 +49,33 @@ hrvst_GET <- function(base_url = NULL, headers = NULL,
     )
   }
 
-  # TODO expand to support other query parameters..
-  if (missing(...) && (missing(is_active) || rlang::is_null(is_active))) {
-    queries <- NULL
-  } else {
-    queries <- list(is_active = is_active, ...)
+  if (!is.null(updated_since)) {
+    assertthat::assert_that(
+      !any(
+        "error" %in%
+          class(
+            tryCatch(lubridate::as_date(updated_since), error = function(e) e)
+          )
+      ),
+      msg = "The string entered cannot be converted to a POSIXct format date."
+    )
+    updated_since <- lubridate::format_ISO8601(
+      lubridate::as_date(updated_since),
+      precision = "ymd"
+    )
   }
 
-  req_obj <- httr2::request(base_url = base_url) |>
+  queries <- rlang::dots_list(
+    is_active = is_active,
+    updated_since = updated_since,
+    from = from,
+    to = to,
+    ...,
+    .homonyms = "error",
+    .ignore_empty = "all"
+  ) |> purrr::compact()
+
+  req_obj <- httr2::request(base_url = url) |>
     httr2::req_headers(!!!all_headers) # |>
   # httr2::req_auth_bearer_token(hRvstAPI::hrvst_token())
 
@@ -120,8 +140,10 @@ hrvst_GET <- function(base_url = NULL, headers = NULL,
 #'
 #' @seealso [Harvest API V2 Documentation | Rate Limiting](https://help.getharvest.com/api-v2/introduction/overview/general/#rate-limiting)
 hrvst_req <- function(resource = NULL, all_pages = TRUE,
-                        base_url = NULL, headers = NULL,
-                        is_active = NULL, ...) {
+                      base_url = NULL, headers = NULL,
+                      is_active = "true",
+                      updated_since = NULL, weeks_ago = NULL,
+                      from = NULL, to = NULL, ...) {
   assertthat::assert_that(
     rlang::is_bool(all_pages),
     msg = "Argument all_pages must be TRUE or FALSE."
@@ -169,6 +191,23 @@ hrvst_req <- function(resource = NULL, all_pages = TRUE,
     # "task time report" = "reports/time/tasks"
   )
 
+  print(updated_since)
+  print(weeks_ago)
+  if (is.null(updated_since) && !is.null(weeks_ago)) {
+    year_num <- lubridate::year(lubridate::today())
+    week_num <- lubridate::week(lubridate::today())
+    updated_since <- lubridate::as_date(
+      paste(
+        year_num,
+        stringr::str_pad(week_num - weeks_ago, 2, "left", pad = "0"),
+        1, # first day of week, %u format code
+        sep = "-"
+      ),
+      format = "%Y-%U-%u"
+    )
+  }
+  print(updated_since)
+
   # Harvest API v2 Rate Limiting
   # https://help.getharvest.com/api-v2/introduction/overview/general/#rate-limiting
   if (grepl("report", resource_arg)) {
@@ -213,9 +252,12 @@ hrvst_req <- function(resource = NULL, all_pages = TRUE,
   }
 
   first_req <- hrvst_GET(
-    base_url = base_url,
+    url = base_url,
     headers = headers,
     is_active = is_active,
+    updated_since = updated_since,
+    from = from,
+    to = to,
     ...
   ) |>
     httr2::req_url_path_append(resource_path) |>
