@@ -73,7 +73,7 @@ hrvst_GET <- function(url = NULL, headers = NULL,
     ...,
     .homonyms = "error",
     .ignore_empty = "all"
-  ) |> purrr::compact()
+  ) |> purrr::compact() # drop NULL values
 
   req_obj <- httr2::request(base_url = url) |>
     httr2::req_headers(!!!all_headers) # |>
@@ -149,7 +149,8 @@ hrvst_req <- function(resource = NULL, all_pages = TRUE,
     msg = "Argument all_pages must be TRUE or FALSE."
   )
 
-  resource_arg <- match.arg(resource,
+  resource_arg <- match.arg(
+    resource,
     c(
       NULL,
       "users",
@@ -191,8 +192,6 @@ hrvst_req <- function(resource = NULL, all_pages = TRUE,
     # "task time report" = "reports/time/tasks"
   )
 
-  print(updated_since)
-  print(weeks_ago)
   if (is.null(updated_since) && !is.null(weeks_ago)) {
     year_num <- lubridate::year(lubridate::today())
     week_num <- lubridate::week(lubridate::today())
@@ -206,7 +205,6 @@ hrvst_req <- function(resource = NULL, all_pages = TRUE,
       format = "%Y-%U-%u"
     )
   }
-  print(updated_since)
 
   # Harvest API v2 Rate Limiting
   # https://help.getharvest.com/api-v2/introduction/overview/general/#rate-limiting
@@ -243,12 +241,12 @@ hrvst_req <- function(resource = NULL, all_pages = TRUE,
     }
     tibble::as_tibble(purrr::pluck(.parsed_resp, !!!accessors)) |>
       dplyr::select_if(\(col) !is.list(col)) |>
-      dplyr::mutate(resp_page = .parsed_resp$page)# |>
-      # dplyr::mutate(dplyr::across(
-      #   tidyselect::any_of("id"),
-      #   .fns = bit64::as.integer64
-      # ))
-      # TODO remove bit64 from imports
+      dplyr::mutate(resp_page = .parsed_resp$page) # |>
+    # dplyr::mutate(dplyr::across(
+    #   tidyselect::any_of("id"),
+    #   .fns = bit64::as.integer64
+    # ))
+    # TODO remove bit64 from imports
   }
 
   first_req <- hrvst_GET(
