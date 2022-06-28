@@ -33,7 +33,7 @@ hrvst_GET <- function(url = NULL, headers = NULL,
     )
   )
 
-  if (missing(headers)) {
+  if (is.null(headers)) {
     all_headers <- common_headers
   } else {
     all_headers <- c(
@@ -42,7 +42,7 @@ hrvst_GET <- function(url = NULL, headers = NULL,
     )
   }
 
-  if (!missing(is_active) && !rlang::is_null(is_active)) {
+  if (!is.null(is_active)) {
     assertthat::assert_that(
       rlang::is_bool(is_active),
       msg = "If provided, argument is_active must be TRUE or FALSE."
@@ -79,7 +79,7 @@ hrvst_GET <- function(url = NULL, headers = NULL,
     httr2::req_headers(!!!all_headers) # |>
   # httr2::req_auth_bearer_token(hRvstAPI::hrvst_token())
 
-  if (!rlang::is_null(queries)) {
+  if (!is.null(queries)) {
     httr2::req_url_query(req_obj, !!!queries)
   } else {
     req_obj
@@ -223,7 +223,7 @@ hrvst_req <- function(resource = NULL, all_pages = TRUE,
   # function to perform the request and parse JSON to R list..
   perform_and_parse <- function(.req = NULL) {
     assertthat::assert_that(
-      !rlang::is_null(.req),
+      !is.null(.req),
       msg = "`perform_and_parse()`: request is missing."
     )
     httr2::req_perform(.req) |>
@@ -277,8 +277,8 @@ hrvst_req <- function(resource = NULL, all_pages = TRUE,
   next_link <- resp$links[["next"]]
 
   if (all_pages) {
-    while (!rlang::is_null(next_link)) {
-      resp <- hrvst_GET(base_url = next_link) |>
+    while (!is.null(next_link)) {
+      resp <- hrvst_GET(url = next_link) |>
         perform_and_parse()
       all_resp <- c(all_resp, list(resp))
       next_link <- resp$links[["next"]]

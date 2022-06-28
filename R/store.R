@@ -7,7 +7,7 @@
 #' @return
 #' @export
 create_rds <- function(..., rds_path = NULL, sql_colnames = TRUE) {
-  if (missing(rds_path) || is.null(rds_path)) {
+  if (is.null(rds_path)) {
     rds_path <- hRvstAPI::.rds_path
   }
 
@@ -16,7 +16,7 @@ create_rds <- function(..., rds_path = NULL, sql_colnames = TRUE) {
     msg = "Argument sql_colnames should be TRUE or FALSE."
   )
 
-  if (missing(...) || is.null(...)) {
+  if (is.null(...)) {
     resources <- list(
       `users` = "users",
       `clients` = "clients",
@@ -70,10 +70,10 @@ create_rds <- function(..., rds_path = NULL, sql_colnames = TRUE) {
 #'
 #' @examples
 create_db <- function(db_path = NULL, rds_path = NULL) {
-  if (missing(rds_path) || is.null(rds_path)) {
+  if (is.null(rds_path)) {
     rds_path <- hRvstAPI::.rds_path
   }
-  if (missing(db_path) || is.null(db_path)) {
+  if (is.null(db_path)) {
     db_path <- hRvstAPI::.db_path
   }
 
@@ -178,7 +178,7 @@ key_col <- function(db_connection, tbl) {
 #'
 #' @examples
 get_keys <- function(db_connection, tbl, key = NULL) {
-  if (missing(key) || is.null(key)) {
+  if (is.null(key)) {
     stop("Cannot get key when key is NULL.")
   }
   hRvstAPI::query_db(
@@ -200,10 +200,10 @@ get_keys <- function(db_connection, tbl, key = NULL) {
 #'
 #' @examples
 update_db <- function(db_path = NULL, rds_path = NULL) {
-  if (missing(rds_path) || is.null(rds_path)) {
+  if (is.null(rds_path)) {
     rds_path <- hRvstAPI::.rds_path
   }
-  if (missing(db_path) || is.null(db_path)) {
+  if (is.null(db_path)) {
     db_path <- hRvstAPI::.db_path
   }
 
