@@ -44,8 +44,8 @@ hrvst_GET <- function(url = NULL, headers = NULL,
 
   if (!is.null(is_active)) {
     assertthat::assert_that(
-      rlang::is_bool(is_active),
-      msg = "If provided, argument is_active must be TRUE or FALSE."
+      is_active %in% c("true", "false"),
+      msg = "If provided, argument is_active must be 'true' or 'false'."
     )
   }
 
