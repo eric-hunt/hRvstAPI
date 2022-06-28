@@ -16,7 +16,7 @@ create_rds <- function(..., rds_path = NULL, sql_colnames = TRUE) {
     msg = "Argument sql_colnames should be TRUE or FALSE."
   )
 
-  if (is.null(...)) {
+  if (missing(...)) {
     resources <- list(
       `users` = "users",
       `clients` = "clients",
