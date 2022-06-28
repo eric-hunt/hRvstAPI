@@ -9,7 +9,11 @@ hrvst_req(
   all_pages = TRUE,
   base_url = NULL,
   headers = NULL,
-  is_active = NULL,
+  is_active = "true",
+  updated_since = NULL,
+  weeks_ago = NULL,
+  from = NULL,
+  to = NULL,
   ...
 )
 }
@@ -46,6 +50,8 @@ hrvst_req(
 \item{base_url}{-- A string -- the common URL component for Harvest API v2 requests, passed to \code{\link[=hrvst_GET]{hrvst_GET()}}.}
 
 \item{headers}{A list -- the headers required for authentication of each Harvest API v2 request, passed to \code{\link[=hrvst_GET]{hrvst_GET()}}.}
+
+\item{to}{}
 
 \item{...}{A named list of (optional) additional query parameters, passed to \code{\link[=hrvst_GET]{hrvst_GET()}}.}
 }

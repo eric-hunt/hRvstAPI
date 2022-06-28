@@ -4,12 +4,24 @@
 \alias{hrvst_GET}
 \title{Create an authenticated GET request with headers and queries.}
 \usage{
-hrvst_GET(base_url = NULL, headers = NULL, is_active = NULL, ...)
+hrvst_GET(
+  url = NULL,
+  headers = NULL,
+  is_active = NULL,
+  updated_since = NULL,
+  from = NULL,
+  to = NULL,
+  ...
+)
 }
 \arguments{
-\item{base_url}{A string -- the common URL component for Harvest API v2 requests. (default value NULL will refer to hRvstAPI::.url)}
+\item{url}{A string -- the URL component for Harvest API v2 requests. (NULL will default to hRvstAPI::.url)}
 
 \item{headers}{A list -- the headers required for authentication of each Harvest API v2 request.}
+
+\item{is_active}{A string -- 'true' or 'false', boolean per Harvest API requirement.}
+
+\item{to}{}
 
 \item{...}{A named list of (optional) additional query parameters.}
 }

@@ -9,10 +9,13 @@ NULL
 #' these important headers are set by the `hRvstAPI::hrvst_acct_id()`,
 #' `hRvstAPI::hrvst_token()`, and `hRvstAPI::.agent` objects.
 #'
-#' @param base_url A string -- the common URL component for Harvest API v2 requests. (default value NULL will refer to hRvstAPI::.url)
+#' @param url A string -- the URL component for Harvest API v2 requests. (NULL will default to hRvstAPI::.url)
 #' @param headers A list -- the headers required for authentication of each Harvest API v2 request.
-#' @param is_active
+#' @param is_active A string -- 'true' or 'false', boolean per Harvest API requirement.
 #' @param ... A named list of (optional) additional query parameters.
+#' @param updated_since
+#' @param from
+#' @param to
 #'
 #' @return An HTTP response: an S3 list with class `httr2_request`.
 #'
@@ -134,6 +137,10 @@ hrvst_GET <- function(url = NULL, headers = NULL,
 #' @param headers A list -- the headers required for authentication of each Harvest API v2 request, passed to [hRvstAPI::hrvst_GET()].
 #' @param is_active
 #' @param ... A named list of (optional) additional query parameters, passed to [hRvstAPI::hrvst_GET()].
+#' @param updated_since
+#' @param weeks_ago
+#' @param from
+#' @param to
 #'
 #' @return A [tibble::tibble()] of all response content.
 #' @export
