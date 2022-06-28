@@ -6,7 +6,10 @@
 #'
 #' @return
 #' @export
-create_rds <- function(..., rds_path = NULL, sql_colnames = TRUE) {
+create_rds <- function(..., is_active = NULL, updated_since = NULL,
+                       weeks_ago = NULL, from = NULL, to = NULL,
+                       rds_path = NULL, sql_colnames = TRUE,
+                       .extra_params = NULL) {
   if (is.null(rds_path)) {
     rds_path <- hRvstAPI::.rds_path
   }
@@ -34,7 +37,15 @@ create_rds <- function(..., rds_path = NULL, sql_colnames = TRUE) {
   req_data <- purrr::map(
     resources,
     function(req_string) {
-      hrvst_req(req_string)
+      hrvst_req(
+        req_string,
+        is_active = is_active,
+        updated_since = updated_since,
+        weeks_ago = weeks_ago,
+        from = from,
+        to = to,
+        ... = .extra_params
+      )
     }
   )
 
