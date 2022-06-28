@@ -27,8 +27,8 @@ create_rds <- function(..., is_active = NULL, updated_since = NULL,
       `tasks` = "tasks",
       `project_assignments` = "project assignments",
       `user_assignments` = "user assignments",
-      `task_assignments` = "task assignments"#,
-      # `time_entries` = "time entries"
+      `task_assignments` = "task assignments",
+      `time_entries` = "time entries"
     )
   } else {
     resources <- purrr::set_names(list(...))
