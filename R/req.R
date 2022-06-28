@@ -168,7 +168,6 @@ hrvst_req <- function(resource = NULL, all_pages = TRUE,
       "project assignments",
       "user assignments",
       "task assignments",
-      # TODO add 'updated_since' parameter
       "time entries",
       "budget report"
       # TODO needs 'from' and 'to' parameters
@@ -189,7 +188,6 @@ hrvst_req <- function(resource = NULL, all_pages = TRUE,
     "project assignments" = "users",
     "user assignments" = "user_assignments",
     "task assignments" = "task_assignments",
-    # TODO add 'updated_since' parameter
     "time entries" = "time_entries",
     "budget report" = "reports/project_budget"
     # TODO needs 'from' and 'to' parameters
