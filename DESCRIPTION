@@ -16,6 +16,7 @@ Imports:
     bit64,
     DBI,
     dplyr,
+    fs,
     getPass,
     glue,
     httr2,

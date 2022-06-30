@@ -23,8 +23,8 @@ NULL
 
 #' @export
 #' @rdname params
-.rds_path <- "~/hRvst_data.rds"
+.rds_path <- "~/hRvst.rds"
 
 #' @export
 #' @rdname params
-.db_path <- "~/hRvst_db.sqlite"
+.db_path <- "~/hRvst.sqlite"
