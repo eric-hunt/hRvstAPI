@@ -229,7 +229,7 @@ update_db <- function(db_path = NULL, rds_path = NULL) {
   withr::defer(cat("\nConnection closed? ", !DBI::dbIsValid(dbconn), "\n"),
                priority = "last")
 
-  dfs <- readr::read_rds(rds_path)
+  dfs <- readr::read_rds(rds_path) |> purrr::discard(\(df) nrow(df) == 0)
   tables <- names(dfs) |> purrr::set_names() # name with itself
   columns <- purrr::map(dfs, colnames)
   has_id <- purrr::map(columns, \(x) {any(grepl("^id$", x, perl = TRUE))})
