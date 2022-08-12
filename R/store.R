@@ -71,7 +71,7 @@ create_rds <- function(..., is_active = NULL, updated_since = NULL,
     )
   }
 
-  if (rlang::is_interactive()) {
+  if (rlang::is_interactive() && !shiny::isRunning()) {
     View(req_data)
   }
 
