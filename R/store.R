@@ -34,7 +34,7 @@ create_rds <- function(..., is_active = NULL, updated_since = NULL,
       `clients` = "clients",
       `projects` = "projects",
       `tasks` = "tasks",
-      `project_assignments` = "project assignments",
+      # `project_assignments` = "project assignments",
       `user_assignments` = "user assignments",
       `task_assignments` = "task assignments",
       `time_entries` = "time entries"
