@@ -154,7 +154,11 @@ create_db <- function(db_path = NULL, rds_path = NULL) {
 #' @return
 #' @export
 #'
-query_db <- function(db_connection, query_string, ...) {
+query_db <- function(db_connection = NULL, query_string, ...) {
+  assertthat::assert_that(
+    !is.null(db_connection),
+    msg = "An active database connection must be provided."
+  )
   varargs <- rlang::list2(query_string, ..., .con = db_connection)
   query <- do.call(glue::glue_sql, varargs)
   DBI::dbGetQuery(
