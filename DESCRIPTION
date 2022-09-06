@@ -26,7 +26,8 @@ Imports:
     rlang,
     RSQLite,
     stringr,
-    tibble
+    tibble,
+    withr
 Collate: 
     'params.R'
     'creds.R'

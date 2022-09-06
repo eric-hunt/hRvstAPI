@@ -147,24 +147,34 @@ create_db <- function(db_path = NULL, rds_path = NULL) {
 
 #' Query a database and collect/return the result.
 #'
-#' @param db_connection A DBI compatible connection object -- the database containing Harvest API v2 request data.
-#' @param query_string A string -- the query to be executed on *db_connection*.
-#' @param ...
+#' @param query_string A string -- the query to be executed.
+#' @param ... Key-value pairs -- additional arguments for interpolation passed to [glue::glue_sql()].
+#' @param .db_loc A string -- file path where a local .sqlite file containing Harvest API data should exist.
 #'
-#' @return
+#' @return A [tibble::tibble()] of data collected from the query.
 #' @export
 #'
-query_db <- function(db_connection = NULL, query_string, ...) {
-  assertthat::assert_that(
-    !is.null(db_connection),
-    msg = "An active database connection must be provided."
+query_db <- function(query_string, ..., .db_loc = hRvstAPI::.db_path) {
+  db <- withr::local_db_connection(
+    RSQLite::dbConnect(RSQLite::SQLite(), dbname = .db_loc)
   )
-  varargs <- rlang::list2(query_string, ..., .con = db_connection)
-  query <- do.call(glue::glue_sql, varargs)
-  DBI::dbGetQuery(
-    db_connection,
-    query
+
+  print(db)
+  cat("\n")
+
+  withr::defer(
+    cat("\nConnection closed? ", !DBI::dbIsValid(db), "\n"),
+    priority = "last"
   )
+
+  statement <- glue::glue_sql(query_string, ..., .con = db)
+
+  print(statement)
+
+  cat("\nCollecting the query results..\n")
+
+  DBI::dbGetQuery(db, statement) |>
+    tibble::as_tibble()
 }
 
 
