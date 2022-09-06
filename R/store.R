@@ -7,7 +7,7 @@
 #' @param from TODO
 #' @param to TODO
 #' @param rds_path A string -- file path where a local .rds file containing Harvest API data should be created.
-#' @param sql_colnames A boolean -- automatically convert '.' to '_' in column names for easier SQL query construction.
+#' @param sql_colnames A Boolean -- automatically convert '.' to '_' in column names for easier SQL query construction.
 #' @param .extra_params Key-value pairs -- optional additional query parameters passed to `...` of [hRvstAPI::hrvst_GET()].
 #'
 #' @return
@@ -83,7 +83,7 @@ create_rds <- function(..., is_active = NULL, updated_since = NULL,
 #' Create a SQLite database to hold Harvest API v2 request data.
 #'
 #' @param db_path A string -- file path where a local .sqlite file containing Harvest API data should be created.
-#' @param rds_path A string -- file path where a local .rds file containing Harvest API data exists.
+#' @param rds_path A string -- file path where a local .rds file containing Harvest API data should exist.
 #'
 #' @return
 #' @export
@@ -145,7 +145,7 @@ create_db <- function(db_path = NULL, rds_path = NULL) {
 
 
 
-#' Query a database and collect/return the result.
+#' Query the local database and collect/return the result.
 #'
 #' @param query_string A string -- the query to be executed.
 #' @param ... Key-value pairs -- additional arguments for interpolation passed to [glue::glue_sql()].
@@ -223,7 +223,7 @@ get_keys <- function(db_connection, tbl, key = NULL) {
 #' Update the local SQLite database with new Harvest API v2 request data.
 #'
 #' @param db_path A string -- file path where a local .sqlite file containing Harvest API data should be updated.
-#' @param rds_path A string -- file path where a local .rds file containing Harvest API data exists.
+#' @param rds_path A string -- file path where a local .rds file containing Harvest API data should exist.
 #'
 #' @return
 #' @export

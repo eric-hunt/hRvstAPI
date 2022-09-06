@@ -4,14 +4,17 @@
 \alias{query_db}
 \title{Query a database and collect/return the result.}
 \usage{
-query_db(db_connection, query_string, ...)
+query_db(query_string, ..., .db_loc = hRvstAPI::.db_path)
 }
 \arguments{
-\item{db_connection}{A DBI compatible connection object -- the database containing Harvest API v2 request data.}
+\item{query_string}{A string -- the query to be executed.}
 
-\item{query_string}{A string -- the query to be executed on \emph{db_connection}.}
+\item{...}{Key-value pairs -- additional arguments for interpolation passed to \code{\link[glue:glue_sql]{glue::glue_sql()}}.}
 
-\item{...}{}
+\item{.db_loc}{A string -- file path where a local .sqlite file containing Harvest API data should exist.}
+}
+\value{
+A \code{\link[tibble:tibble]{tibble::tibble()}} of data collected from the query.
 }
 \description{
 Query a database and collect/return the result.

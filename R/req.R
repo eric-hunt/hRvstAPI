@@ -11,7 +11,7 @@ NULL
 #'
 #' @param url A string -- the URL component for Harvest API v2 requests (NULL will default to [hRvstAPI::.url]).
 #' @param headers A list -- the headers required for authentication of each Harvest API v2 request: 'Harvest-Account-Id', 'Authorization' (PAT), and 'User-Agent' (this package GitHub repo, [hRvstAPI::.agent]).
-#' @param is_active A string -- 'true' or 'false' (boolean per Harvest API requirement) should only active ('true') or inactive ('false') records be requested; default NULL downloads all records.
+#' @param is_active A string -- 'true' or 'false' (Boolean per Harvest API requirement) should only active ('true') or inactive ('false') records be requested; default NULL downloads all records.
 #' @param updated_since A string -- a date or date/time value (in ISO8601 character format) indicated how far back in time to retrieve records. Not supported by all of the Harvest v2 APIs.
 #' @param from TODO
 #' @param to TODO
@@ -133,7 +133,7 @@ hrvst_GET <- function(url = NULL, headers = NULL,
 #'     (via [Reports API](https://help.getharvest.com/api-v2/reports-api/))
 #' - **time reports**
 #'     (via [Reports API](https://help.getharvest.com/api-v2/reports-api/))
-#' @param all_pages A boolean -- should all pages be gathered for a requested resource? (default value TRUE)
+#' @param all_pages A Boolean -- should all pages be gathered for a requested resource? (default value TRUE)
 #' @param base_url -- A string -- the common URL component for Harvest API v2 requests, passed to [hRvstAPI::hrvst_GET()].
 #' @param headers A list -- passed to [hRvstAPI::hrvst_GET()].
 #' @param is_active A string -- 'true' or 'false' passed to [hRvstAPI::hrvst_GET()].
