@@ -2,12 +2,14 @@
 #'
 #' @param query_string A string -- the query to be executed.
 #' @param ... Key-value pairs -- additional arguments for interpolation passed to [glue::glue_sql()].
+#' @param .is_active A Boolean -- restrict results to active entries; defaults to TRUE
 #' @param .db_loc A string -- file path where a local .sqlite file containing Harvest API data should exist.
 #'
 #' @return A [tibble::tibble()] of data collected from the query.
 #' @export
 #'
-query_db <- function(query_string, ..., .db_loc = hRvstAPI::.db_path) {
+query_db <- function(query_string, ...,
+                     .is_active = TRUE, .db_loc = hRvstAPI::.db_path) {
   db <- withr::local_db_connection(
     RSQLite::dbConnect(RSQLite::SQLite(), dbname = .db_loc)
   )
@@ -20,7 +22,21 @@ query_db <- function(query_string, ..., .db_loc = hRvstAPI::.db_path) {
     priority = "last"
   )
 
-  statement <- glue::glue_sql(query_string, ..., .con = db)
+  varargs <- rlang::dots_list(
+    ...,
+    is_active = .is_active,
+    .named = TRUE,
+    .ignore_empty = "all",
+    .homonyms = "first"
+  )
+
+  statement <- rlang::inject(
+    glue::glue_sql(
+      query_string,
+      !!!varargs,
+      .con = db
+    )
+  )
 
   print(statement)
 

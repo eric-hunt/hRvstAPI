@@ -4,12 +4,14 @@
 \alias{query_db}
 \title{Query the local database and collect/return the result.}
 \usage{
-query_db(query_string, ..., .db_loc = hRvstAPI::.db_path)
+query_db(query_string, ..., .is_active = TRUE, .db_loc = hRvstAPI::.db_path)
 }
 \arguments{
 \item{query_string}{A string -- the query to be executed.}
 
 \item{...}{Key-value pairs -- additional arguments for interpolation passed to \code{\link[glue:glue_sql]{glue::glue_sql()}}.}
+
+\item{.is_active}{A Boolean -- restrict results to active entries; defaults to TRUE}
 
 \item{.db_loc}{A string -- file path where a local .sqlite file containing Harvest API data should exist.}
 }
