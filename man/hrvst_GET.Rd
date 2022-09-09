@@ -19,7 +19,7 @@ hrvst_GET(
 
 \item{headers}{A list -- the headers required for authentication of each Harvest API v2 request: 'Harvest-Account-Id', 'Authorization' (PAT), and 'User-Agent' (this package GitHub repo, \link{.agent}).}
 
-\item{is_active}{A string -- 'true' or 'false' (boolean per Harvest API requirement) should only active ('true') or inactive ('false') records be requested; default NULL downloads all records.}
+\item{is_active}{A string -- 'true' or 'false' (Boolean per Harvest API requirement) should only active ('true') or inactive ('false') records be requested; default NULL downloads all records.}
 
 \item{updated_since}{A string -- a date or date/time value (in ISO8601 character format) indicated how far back in time to retrieve records. Not supported by all of the Harvest v2 APIs.}
 

@@ -10,7 +10,6 @@
 #' @param sql_colnames A Boolean -- automatically convert '.' to '_' in column names for easier SQL query construction.
 #' @param .extra_params Key-value pairs -- optional additional query parameters passed to `...` of [hRvstAPI::hrvst_GET()].
 #'
-#' @return
 #' @export
 #'
 #' @seealso [hRvstAPI::hrvst_req()]
@@ -85,7 +84,6 @@ create_rds <- function(..., is_active = NULL, updated_since = NULL,
 #' @param db_path A string -- file path where a local .sqlite file containing Harvest API data should be created.
 #' @param rds_path A string -- file path where a local .rds file containing Harvest API data should exist.
 #'
-#' @return
 #' @export
 #'
 create_db <- function(db_path = NULL, rds_path = NULL) {
@@ -150,7 +148,6 @@ create_db <- function(db_path = NULL, rds_path = NULL) {
 #' @param db_path A string -- file path where a local .sqlite file containing Harvest API data should be updated.
 #' @param rds_path A string -- file path where a local .rds file containing Harvest API data should exist.
 #'
-#' @return
 #' @export
 #'
 update_db <- function(db_path = NULL, rds_path = NULL) {
@@ -170,15 +167,15 @@ update_db <- function(db_path = NULL, rds_path = NULL) {
 
   dfs <- readr::read_rds(rds_path) |> purrr::discard(\(df) nrow(df) == 0)
   tables <- names(dfs) |> purrr::set_names() # name with itself
-  columns <- purrr::map(dfs, colnames)
-  has_id <- purrr::map(columns, \(x) {any(grepl("^id$", x, perl = TRUE))})
-  key_cols <- purrr::map(tables, \(tbl) hRvstAPI::key_col(dbconn, tbl))
+  # columns <- purrr::map(dfs, colnames)
+  # has_id <- purrr::map(columns, \(x) {any(grepl("^id$", x, perl = TRUE))})
+  key_cols <- purrr::map(tables, \(tbl) key_col(dbconn, tbl))
   has_key <- purrr::map(key_cols, \(tbl_col) !is.null(tbl_col))
   existing <- purrr::map2(
     tables,
     key_cols,
     function(tbl, key) {
-      hRvstAPI::get_keys(dbconn, tbl, key)
+      get_keys(dbconn, tbl, key)
     }
   )
 

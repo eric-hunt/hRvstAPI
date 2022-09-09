@@ -45,7 +45,7 @@ hrvst_req(
 (via \href{https://help.getharvest.com/api-v2/reports-api/}{Reports API})
 }}
 
-\item{all_pages}{A boolean -- should all pages be gathered for a requested resource? (default value TRUE)}
+\item{all_pages}{A Boolean -- should all pages be gathered for a requested resource? (default value TRUE)}
 
 \item{base_url}{-- A string -- the common URL component for Harvest API v2 requests, passed to \code{\link[=hrvst_GET]{hrvst_GET()}}.}
 

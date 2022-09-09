@@ -31,7 +31,7 @@ create_rds(
 
 \item{rds_path}{A string -- file path where a local .rds file containing Harvest API data should be created.}
 
-\item{sql_colnames}{A boolean -- automatically convert '.' to '_' in column names for easier SQL query construction.}
+\item{sql_colnames}{A Boolean -- automatically convert '.' to '_' in column names for easier SQL query construction.}
 
 \item{.extra_params}{Key-value pairs -- optional additional query parameters passed to \code{...} of \code{\link[=hrvst_GET]{hrvst_GET()}}.}
 }
