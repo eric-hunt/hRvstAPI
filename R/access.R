@@ -43,7 +43,10 @@ query_db <- function(query_string, ...,
   cat("\nCollecting the query results..\n")
 
   DBI::dbGetQuery(db, statement) |>
-    tibble::as_tibble()
+    # don't initially error out if duplicates exist at tibble creation
+    tibble::as_tibble(.name_repair = "minimal") |>
+    # drop the duplicates if both column name and content are duplicated
+    {\(df) df[!(duplicated(colnames(df)) & duplicated(as.list(df)))]}()
 }
 
 
