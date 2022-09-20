@@ -1,10 +1,35 @@
 Package: hRvstAPI
-Title: What the Package Does (One Line, Title Case)
+Title: This is a wrapper for the Harvest REST API v2.
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+    person(
+      "Eric", "Hunt",
+      email = "52219938+eric-hunt@users.noreply.github.com",
+      role = c("aut", "cre"),
+      comment = c(ORCID = "0000-0002-6891-8294")
+    )
+Description: The foremost function of this package is to act as a *convenient*
+    wrapper around the Harvest REST API v2.
+      To that end, the package handles credentials either through the system
+    keyring using the `keyring` package (preferred), or through environment
+    variables written to a local `.Renviron` file. Credential handling can be
+    initiated explicitly, but otherwise happens automatically upon making an
+    API request.
+      This package tries to make accessing the Harvest API as easy as possible.
+    While it does allow some tweaking of the actual HTTP request via function
+    arguments, the primary method for accessing API data is to simply select
+    which resource to query (e.g. "users" will download all users data). *Note,
+    that the default is to only download "active" records.*
+      The reason for this mode of access is that a request usually isn't very big
+    and the typical user will probably want to manipulate the data in a more 
+    sophisticated manner for some downstream visualization or other analysis.
+    Building on this premise, the secondary function of this package is to
+    manage the long term storage of API data to minimize remote requests. This
+    is achieved by storing API data in a local SQLite database, for which this
+    package also provides a straightforward way of accessing and updating with
+    new data.
+      There is a companion Shiny application (hRvst) which utilizes this wrapper
+    for Harvest API data access, and perhaps slightly enhances this package.
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8
