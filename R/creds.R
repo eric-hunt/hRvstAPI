@@ -106,7 +106,8 @@ add_creds <- function(.report = NULL) {
   if (shiny::isRunning()) {
     # If a Shiny app is using this API wrapper add creds this way..
     # TODO retrieve with a `shiny` modal in a module?..
-    stop("Credentials must currently be set as variables in .Renviron.")
+    warning("Credentials must currently be set as variables in .Renviron for
+            Shiny applications.")
   } else if (report$session_interactive) {
     # ..otherwise add creds this way..
     add_acct_id <- function(message = "Please enter your Harvest account ID.") {
